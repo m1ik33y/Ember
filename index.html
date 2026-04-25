@@ -449,7 +449,7 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
     <div id="content"></div>
   </div>
 
-  <!-- MOBILE NAV — FIX 2: added Ember button -->
+  <!-- MOBILE NAV -->
   <nav id="mobile-nav">
     <div class="mob-nav-items">
       <button class="mob-nav-item active" onclick="navigate('feed')" id="mob-nav-feed">
@@ -498,7 +498,6 @@ let state = {
   users: {},
 };
 
-// FIX 3: Track if intro has been shown this session (reset on page refresh)
 let _emberIntroShown = false;
 
 const SAMPLE_USERS = [
@@ -580,21 +579,17 @@ function updateSidebarUser(){
 function navigate(page){
   state.currentPage=page;
 
-  // Update sidebar nav
   document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
   const ni=document.getElementById('nav-'+page);if(ni)ni.classList.add('active');
-  // Update mobile nav
   document.querySelectorAll('.mob-nav-item').forEach(e=>e.classList.remove('active'));
   const mi=document.getElementById('mob-nav-'+page);if(mi)mi.classList.add('active');
 
   const titles={feed:'Feed',chats:'Chats',polls:'Polls',projects:'Projects',profile:'Profile',settings:'Settings',ember:'Ember AI'};
   document.getElementById('topbar-title').textContent=titles[page]||page;
 
-  // Host Project button — only visible on Projects page
   const hpBtn=document.getElementById('host-project-btn');
   if(hpBtn) hpBtn.classList.toggle('visible', page==='projects');
 
-  // FAB — only for feed, polls, chats
   const fab=document.getElementById('fab-btn');
   const showFab=['feed','polls','chats'].includes(page);
   if(showFab){
@@ -613,19 +608,16 @@ function navigate(page){
     fab.classList.remove('visible');
   }
 
-  // FIX 4: Always clean up ember layout when leaving ember page
   if(page !== 'ember'){
     const emberWrap = document.getElementById('ember-layout-wrap');
     if(emberWrap) emberWrap.remove();
   }
 
-  // Reset content area (show it for non-ember pages)
   const content=document.getElementById('content');
   if(page !== 'ember'){
     content.style.cssText='';
   }
 
-  // Remove chat layout if leaving chats
   const cl=document.getElementById('chat-layout-wrap');
   if(cl && page!=='chats') cl.remove();
 
@@ -645,7 +637,6 @@ function renderEmber() {
   const content = document.getElementById('content');
   const main = document.getElementById('main');
 
-  // Remove any stale ember layout
   const old = document.getElementById('ember-layout-wrap');
   if (old) old.remove();
 
@@ -655,7 +646,6 @@ function renderEmber() {
   wrap.id = 'ember-layout-wrap';
   wrap.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;height:100%;position:relative;';
 
-  // Inject styles once
   if (!document.getElementById('ember-ai-styles')) {
     const style = document.createElement('style');
     style.id = 'ember-ai-styles';
@@ -667,8 +657,6 @@ function renderEmber() {
         font-family: 'Outfit', 'Lato', sans-serif;
       }
 
-      /* ── INTRO SCREEN ── */
-      /* FIX 1: Shifted content upward with margin-bottom to optically center higher */
       #ember-intro {
         position: absolute; inset: 0; z-index: 50;
         background: var(--bg);
@@ -681,7 +669,6 @@ function renderEmber() {
         animation: ei-rise 0.7s cubic-bezier(.22,1,.36,1) both;
         filter: drop-shadow(0 0 18px var(--accent));
       }
-      /* FIX 1: Much larger logo text */
       .ei-name {
         font-family: 'Cinzel', serif;
         font-size: 3.8rem; font-weight: 600;
@@ -710,7 +697,6 @@ function renderEmber() {
       @keyframes ei-up    { from { transform: translateY(10px); opacity:0 } to { transform:none; opacity:1 } }
       @keyframes ei-fill  { to { width: 100% } }
 
-      /* ── HEADER ── */
       #ember-header {
         display: flex; align-items: center; justify-content: space-between;
         padding: .7rem 1.25rem;
@@ -748,7 +734,6 @@ function renderEmber() {
       @keyframes flicker  { 0%,100%{filter:drop-shadow(0 0 6px var(--accent))} 50%{filter:drop-shadow(0 0 12px var(--accent2))} }
       @keyframes pulse-dot{ 0%,100%{opacity:1} 50%{opacity:.35} }
 
-      /* ── MESSAGES AREA ── */
       #ember-msgs {
         flex: 1; overflow-y: auto;
         padding: 1.25rem 1.25rem 1rem;
@@ -758,7 +743,6 @@ function renderEmber() {
       #ember-msgs::-webkit-scrollbar { width: 4px; }
       #ember-msgs::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
 
-      /* welcome */
       .em-welcome {
         margin: auto; text-align: center;
         display: flex; flex-direction: column; align-items: center; gap: .85rem;
@@ -795,7 +779,6 @@ function renderEmber() {
         border-color: var(--accent); background: var(--accentbg); color: var(--accent);
       }
 
-      /* message rows */
       .em-row { display: flex; gap: .65rem; animation: em-in .25s ease both; }
       .em-row.em-mine { flex-direction: row-reverse; }
       @keyframes em-in { from{transform:translateY(6px);opacity:0} to{transform:none;opacity:1} }
@@ -847,7 +830,6 @@ function renderEmber() {
         font-size: .82em; color: var(--accent);
       }
 
-      /* typing dots */
       .em-typing {
         display: flex; align-items: center; gap: 4px; padding: .5rem 0;
       }
@@ -860,7 +842,6 @@ function renderEmber() {
       .em-typing span:nth-child(3){ animation-delay: .36s; }
       @keyframes em-dot { 0%,80%,100%{transform:scale(.55);opacity:.3} 40%{transform:scale(1);opacity:1} }
 
-      /* ── INPUT ROW ── */
       #ember-input-area {
         padding: .85rem 1.25rem 1rem;
         border-top: 1px solid var(--border);
@@ -901,13 +882,11 @@ function renderEmber() {
     document.head.appendChild(style);
   }
 
-  // FIX 3: Only show intro once per session
   const showIntro = !_emberIntroShown;
   if (showIntro) _emberIntroShown = true;
 
   wrap.innerHTML = `
     ${showIntro ? `
-    <!-- Intro overlay (shown once per refresh) -->
     <div id="ember-intro">
       <div class="ei-flame">
         <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg>
@@ -917,7 +896,6 @@ function renderEmber() {
       <div class="ei-bar"><div class="ei-bar-fill"></div></div>
     </div>` : ''}
 
-    <!-- Header -->
     <div id="ember-header">
       <div class="eh-brand">
         <div class="eh-flame">
@@ -931,7 +909,6 @@ function renderEmber() {
       </div>
     </div>
 
-    <!-- Messages -->
     <div id="ember-msgs">
       <div class="em-welcome" id="ember-welcome">
         <div class="em-welcome-icon">
@@ -948,17 +925,16 @@ function renderEmber() {
       </div>
     </div>
 
-    <!-- Input -->
     <div id="ember-input-area">
       <div id="ember-input-wrap">
         <textarea
           id="ember-ai-inp"
           placeholder="Ask Ember anything…"
           rows="1"
-          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendEmberMsg();}"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendEmber();}"
           oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,110)+'px';"
         ></textarea>
-        <button id="ember-send-btn" onclick="sendEmberMsg()">
+        <button id="ember-send-btn" onclick="sendEmber()">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
             <line x1="22" y1="2" x2="11" y2="13"/>
             <polygon points="22 2 15 22 11 13 2 9 22 2"/>
@@ -971,7 +947,6 @@ function renderEmber() {
 
   main.appendChild(wrap);
 
-  // FIX 3: Dismiss intro only if it's showing
   if (showIntro) {
     setTimeout(() => {
       const intro = document.getElementById('ember-intro');
@@ -984,18 +959,20 @@ function renderEmber() {
   }
 }
 
+/* ===== FIX: emberSuggest now correctly calls sendEmber() ===== */
 function emberSuggest(btn) {
   const inp = document.getElementById('ember-ai-inp');
   if (inp) {
     inp.value = btn.textContent;
     inp.style.height = 'auto';
     inp.style.height = Math.min(inp.scrollHeight, 110) + 'px';
-    sendEmberMsg();
+    sendEmber(); // FIXED: was sendEmberMsg()
   }
 }
 
 const _emberHistory = [];
 
+/* ===== sendEmber — the one true send function ===== */
 async function sendEmber() {
   const inp = document.getElementById('ember-ai-inp');
   const msgs = document.getElementById('ember-msgs');
@@ -1004,7 +981,11 @@ async function sendEmber() {
   const text = inp.value.trim();
   if (!text) return;
 
-  // Hide welcome
+  // Disable input while waiting
+  inp.disabled = true;
+  document.getElementById('ember-send-btn').disabled = true;
+
+  // Hide welcome screen
   const welcome = document.getElementById('ember-welcome');
   if (welcome) welcome.remove();
 
@@ -1031,7 +1012,7 @@ async function sendEmber() {
   typingEl.className = 'em-row';
   typingEl.id = 'ember-typing';
   typingEl.innerHTML = `
-    <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fan-icon lucide-fan"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
+    <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
     <div class="em-body">
       <div class="em-sender">Ember</div>
       <div class="em-bubble"><div class="em-typing"><span></span><span></span><span></span></div></div>
@@ -1040,29 +1021,26 @@ async function sendEmber() {
   scrollToBottom('ember-msgs');
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: `You are Ember, a sharp, warm, and confident AI assistant embedded inside a social app called Ember. You are direct, witty, and genuinely helpful. Your responses are concise but substantive. Never mention Claude or Anthropic — you are Ember. Use markdown for code (backticks) and bold when helpful. Keep answers tight and human.`,
-        messages: _emberHistory
-      })
+      body: JSON.stringify({ message: text })
     });
 
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
     const data = await res.json();
-    const reply = data.content?.map(b => b.text || '').join('') || 'Something went wrong.';
+    const reply = data.reply || 'Something went wrong.';
+
     _emberHistory.push({ role: 'assistant', content: reply });
 
-    // Remove typing, add reply
     const t = document.getElementById('ember-typing');
     if (t) t.remove();
 
     const aiEl = document.createElement('div');
     aiEl.className = 'em-row';
     aiEl.innerHTML = `
-      <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fan-icon lucide-fan"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
+      <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
       <div class="em-body">
         <div class="em-sender">Ember</div>
         <div class="em-bubble">${emberFormat(reply)}</div>
@@ -1072,15 +1050,21 @@ async function sendEmber() {
   } catch (err) {
     const t = document.getElementById('ember-typing');
     if (t) t.remove();
+
     const errEl = document.createElement('div');
     errEl.className = 'em-row';
     errEl.innerHTML = `
-      <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fan-icon lucide-fan"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
+      <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
       <div class="em-body">
         <div class="em-sender">Ember</div>
-        <div class="em-bubble" style="color:var(--danger)">Couldn't reach Ember right now. Check your connection.</div>
+        <div class="em-bubble" style="color:var(--danger)">Couldn't reach Ember right now. Check your connection or API route.</div>
       </div>`;
     msgs.appendChild(errEl);
+  } finally {
+    // Re-enable input
+    inp.disabled = false;
+    document.getElementById('ember-send-btn').disabled = false;
+    inp.focus();
   }
 
   scrollToBottom('ember-msgs');
