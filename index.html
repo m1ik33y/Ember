@@ -119,7 +119,7 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
 #content{flex:1;overflow-y:auto;padding:1.25rem;max-width:680px;margin:0 auto;width:100%;}
 
 /* ===== FAB ===== */
-#fab-btn{position:fixed;right:24px;bottom:24px;width:52px;height:52px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:1.5rem;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 20px var(--shadow);transition:all .2s;z-index:200;}
+#fab-btn{position:fixed;right:24px;bottom:70px;width:52px;height:52px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:1.5rem;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 20px var(--shadow);transition:all .2s;z-index:200;}
 #fab-btn:hover{transform:scale(1.1);}
 #fab-btn.visible{display:flex;}
 
@@ -311,6 +311,22 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
   #sidebar{display:none;}
+  #ember-input-area{
+    position:fixed;
+    bottom:54px; /* above mobile nav */
+    left:0;
+    right:0;
+    padding:.5rem .75rem;
+    background:var(--nav);
+    border-top:1px solid var(--navborder);
+    z-index:300;
+  }
+  /* Hide ember input area during intro on mobile */
+  #ember-input-area.ember-intro-hidden{
+    opacity:0;
+    pointer-events:none;
+    visibility:hidden;
+  }
   #mobile-nav{display:block;}
   #app{flex-direction:column;}
   #main{height:calc(100vh - 58px);}
@@ -846,6 +862,7 @@ function renderEmber() {
         padding: .85rem 1.25rem 1rem;
         border-top: 1px solid var(--border);
         background: var(--nav); flex-shrink: 0;
+        transition: opacity .35s ease, visibility .35s ease;
       }
       #ember-input-wrap {
         display: flex; align-items: center; gap: .5rem;
@@ -884,6 +901,9 @@ function renderEmber() {
 
   const showIntro = !_emberIntroShown;
   if (showIntro) _emberIntroShown = true;
+
+  // Detect mobile (matches the CSS breakpoint)
+  const isMobile = window.innerWidth <= 768;
 
   wrap.innerHTML = `
     ${showIntro ? `
@@ -947,13 +967,30 @@ function renderEmber() {
 
   main.appendChild(wrap);
 
+  // On mobile, hide the input area during intro, then reveal it when intro ends
+  if (showIntro && isMobile) {
+    const inputArea = document.getElementById('ember-input-area');
+    if (inputArea) {
+      inputArea.classList.add('ember-intro-hidden');
+    }
+  }
+
   if (showIntro) {
     setTimeout(() => {
       const intro = document.getElementById('ember-intro');
       if (intro) {
         intro.style.transition = 'opacity .45s ease';
         intro.style.opacity = '0';
-        setTimeout(() => intro.remove(), 450);
+        setTimeout(() => {
+          intro.remove();
+          // Reveal the input area on mobile after intro is gone
+          if (isMobile) {
+            const inputArea = document.getElementById('ember-input-area');
+            if (inputArea) {
+              inputArea.classList.remove('ember-intro-hidden');
+            }
+          }
+        }, 450);
       }
     }, 2400);
   }
@@ -966,7 +1003,7 @@ function emberSuggest(btn) {
     inp.value = btn.textContent;
     inp.style.height = 'auto';
     inp.style.height = Math.min(inp.scrollHeight, 110) + 'px';
-    sendEmber(); // FIXED: was sendEmberMsg()
+    sendEmber();
   }
 }
 
@@ -981,15 +1018,12 @@ async function sendEmber() {
   const text = inp.value.trim();
   if (!text) return;
 
-  // Disable input while waiting
   inp.disabled = true;
   document.getElementById('ember-send-btn').disabled = true;
 
-  // Hide welcome screen
   const welcome = document.getElementById('ember-welcome');
   if (welcome) welcome.remove();
 
-  // User bubble
   const userEl = document.createElement('div');
   userEl.className = 'em-row em-mine';
   const userInitialChar = (state.user?.name || 'G').charAt(0).toUpperCase();
@@ -1007,7 +1041,6 @@ async function sendEmber() {
 
   _emberHistory.push({ role: 'user', content: text });
 
-  // Typing indicator
   const typingEl = document.createElement('div');
   typingEl.className = 'em-row';
   typingEl.id = 'ember-typing';
@@ -1061,7 +1094,6 @@ async function sendEmber() {
       </div>`;
     msgs.appendChild(errEl);
   } finally {
-    // Re-enable input
     inp.disabled = false;
     document.getElementById('ember-send-btn').disabled = false;
     inp.focus();
