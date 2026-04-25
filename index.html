@@ -996,48 +996,94 @@ function emberSuggest(btn) {
 
 const _emberHistory = [];
 
-try {
-  const res = await fetch('/api/chat', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      message: text
-    })
-  });
+async function sendEmber() {
+  const inp = document.getElementById('ember-ai-inp');
+  const msgs = document.getElementById('ember-msgs');
+  if (!inp || !msgs) return;
 
-  const data = await res.json();
-  const reply = data.reply || 'Something went wrong.';
+  const text = inp.value.trim();
+  if (!text) return;
 
-  _emberHistory.push({ role: 'assistant', content: reply });
+  // Hide welcome
+  const welcome = document.getElementById('ember-welcome');
+  if (welcome) welcome.remove();
 
-  const t = document.getElementById('ember-typing');
-  if (t) t.remove();
+  // User bubble
+  const userEl = document.createElement('div');
+  userEl.className = 'em-row em-mine';
+  const userInitialChar = (state.user?.name || 'G').charAt(0).toUpperCase();
+  userEl.innerHTML = `
+    <div class="em-av em-av-user">${userInitialChar}</div>
+    <div class="em-body">
+      <div class="em-sender">You</div>
+      <div class="em-bubble">${escHtml(text)}</div>
+    </div>`;
+  msgs.appendChild(userEl);
 
-  const aiEl = document.createElement('div');
-  aiEl.className = 'em-row';
-  aiEl.innerHTML = `
-    <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
+  inp.value = '';
+  inp.style.height = 'auto';
+  scrollToBottom('ember-msgs');
+
+  _emberHistory.push({ role: 'user', content: text });
+
+  // Typing indicator
+  const typingEl = document.createElement('div');
+  typingEl.className = 'em-row';
+  typingEl.id = 'ember-typing';
+  typingEl.innerHTML = `
+    <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fan-icon lucide-fan"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
     <div class="em-body">
       <div class="em-sender">Ember</div>
-      <div class="em-bubble">${emberFormat(reply)}</div>
+      <div class="em-bubble"><div class="em-typing"><span></span><span></span><span></span></div></div>
     </div>`;
-  msgs.appendChild(aiEl);
+  msgs.appendChild(typingEl);
+  scrollToBottom('ember-msgs');
 
-} catch (err) {
-  const t = document.getElementById('ember-typing');
-  if (t) t.remove();
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `You are Ember, a sharp, warm, and confident AI assistant embedded inside a social app called Ember. You are direct, witty, and genuinely helpful. Your responses are concise but substantive. Never mention Claude or Anthropic — you are Ember. Use markdown for code (backticks) and bold when helpful. Keep answers tight and human.`,
+        messages: _emberHistory
+      })
+    });
 
-  const errEl = document.createElement('div');
-  errEl.className = 'em-row';
-  errEl.innerHTML = `
-    <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
-    <div class="em-body">
-      <div class="em-sender">Ember</div>
-      <div class="em-bubble" style="color:var(--danger)">Couldn't reach Ember right now. Check your connection.</div>
-    </div>`;
-  msgs.appendChild(errEl);
+    const data = await res.json();
+    const reply = data.content?.map(b => b.text || '').join('') || 'Something went wrong.';
+    _emberHistory.push({ role: 'assistant', content: reply });
+
+    // Remove typing, add reply
+    const t = document.getElementById('ember-typing');
+    if (t) t.remove();
+
+    const aiEl = document.createElement('div');
+    aiEl.className = 'em-row';
+    aiEl.innerHTML = `
+      <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fan-icon lucide-fan"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
+      <div class="em-body">
+        <div class="em-sender">Ember</div>
+        <div class="em-bubble">${emberFormat(reply)}</div>
+      </div>`;
+    msgs.appendChild(aiEl);
+
+  } catch (err) {
+    const t = document.getElementById('ember-typing');
+    if (t) t.remove();
+    const errEl = document.createElement('div');
+    errEl.className = 'em-row';
+    errEl.innerHTML = `
+      <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fan-icon lucide-fan"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
+      <div class="em-body">
+        <div class="em-sender">Ember</div>
+        <div class="em-bubble" style="color:var(--danger)">Couldn't reach Ember right now. Check your connection.</div>
+      </div>`;
+    msgs.appendChild(errEl);
+  }
+
+  scrollToBottom('ember-msgs');
 }
 
 function emberFormat(t) {
