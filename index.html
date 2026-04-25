@@ -403,11 +403,11 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
         Polls
       </button>
       <button class="nav-item" onclick="navigate('ember')" id="nav-ember">
-  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-    <path d="M12 2s4 4 4 8-2 6-4 8c-2-2-4-4-4-8s4-8 4-8z"/>
-  </svg>
-  Ember
-</button>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 2s4 4 4 8-2 6-4 8c-2-2-4-4-4-8s4-8 4-8z"/>
+        </svg>
+        Ember
+      </button>
       <button class="nav-item" onclick="navigate('projects')" id="nav-projects">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><polyline points="3,7 12,11 21,7"/><line x1="12" y1="11" x2="12" y2="22"/></svg>
         Projects
@@ -437,7 +437,6 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
     <div id="topbar">
       <div class="topbar-title" id="topbar-title">Feed</div>
       <div style="display:flex;gap:.5rem;align-items:center;">
-        <!-- Host Project button — only shown on Projects page -->
         <button class="host-project-btn" id="host-project-btn" onclick="showProjectModal()">
           <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Host Project
@@ -450,7 +449,7 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
     <div id="content"></div>
   </div>
 
-  <!-- MOBILE NAV -->
+  <!-- MOBILE NAV — FIX 2: added Ember button -->
   <nav id="mobile-nav">
     <div class="mob-nav-items">
       <button class="mob-nav-item active" onclick="navigate('feed')" id="mob-nav-feed">
@@ -461,13 +460,13 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         <span class="mob-nav-label">Chats</span>
       </button>
+      <button class="mob-nav-item" onclick="navigate('ember')" id="mob-nav-ember">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2s4 4 4 8-2 6-4 8c-2-2-4-4-4-8s4-8 4-8z"/></svg>
+        <span class="mob-nav-label">Ember</span>
+      </button>
       <button class="mob-nav-item" onclick="navigate('polls')" id="mob-nav-polls">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         <span class="mob-nav-label">Polls</span>
-      </button>
-      <button class="mob-nav-item" onclick="navigate('projects')" id="mob-nav-projects">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><polyline points="3,7 12,11 21,7"/><line x1="12" y1="11" x2="12" y2="22"/></svg>
-        <span class="mob-nav-label">Projects</span>
       </button>
       <button class="mob-nav-item" onclick="navigate('profile')" id="mob-nav-profile">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
@@ -498,6 +497,9 @@ let state = {
   projectChats: {},
   users: {},
 };
+
+// FIX 3: Track if intro has been shown this session (reset on page refresh)
+let _emberIntroShown = false;
 
 const SAMPLE_USERS = [
   {id:'u1',name:'Lyra Voss',bio:'Dreamer and creator 🌙',isGuest:false},
@@ -577,6 +579,7 @@ function updateSidebarUser(){
 /* ===== NAVIGATION ===== */
 function navigate(page){
   state.currentPage=page;
+
   // Update sidebar nav
   document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
   const ni=document.getElementById('nav-'+page);if(ni)ni.classList.add('active');
@@ -591,7 +594,7 @@ function navigate(page){
   const hpBtn=document.getElementById('host-project-btn');
   if(hpBtn) hpBtn.classList.toggle('visible', page==='projects');
 
-  // FAB — only for feed, polls, chats (NOT projects)
+  // FAB — only for feed, polls, chats
   const fab=document.getElementById('fab-btn');
   const showFab=['feed','polls','chats'].includes(page);
   if(showFab){
@@ -610,9 +613,17 @@ function navigate(page){
     fab.classList.remove('visible');
   }
 
-  // Reset content area
+  // FIX 4: Always clean up ember layout when leaving ember page
+  if(page !== 'ember'){
+    const emberWrap = document.getElementById('ember-layout-wrap');
+    if(emberWrap) emberWrap.remove();
+  }
+
+  // Reset content area (show it for non-ember pages)
   const content=document.getElementById('content');
-  content.style.cssText='';
+  if(page !== 'ember'){
+    content.style.cssText='';
+  }
 
   // Remove chat layout if leaving chats
   const cl=document.getElementById('chat-layout-wrap');
@@ -629,78 +640,459 @@ function navigate(page){
   }
 }
 
-function renderEmber(){
-  const c = document.getElementById('content');
+/* ===== EMBER AI PAGE ===== */
+function renderEmber() {
+  const content = document.getElementById('content');
+  const main = document.getElementById('main');
 
-  c.innerHTML = `
-    <div class="chat-header" style="margin-bottom:1rem;">
-      <div style="font-weight:700;">🔥 Ember AI</div>
-      <div style="font-size:.8rem;color:var(--text3);">Ask anything</div>
+  // Remove any stale ember layout
+  const old = document.getElementById('ember-layout-wrap');
+  if (old) old.remove();
+
+  content.style.display = 'none';
+
+  const wrap = document.createElement('div');
+  wrap.id = 'ember-layout-wrap';
+  wrap.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;height:100%;position:relative;';
+
+  // Inject styles once
+  if (!document.getElementById('ember-ai-styles')) {
+    const style = document.createElement('style');
+    style.id = 'ember-ai-styles';
+    style.textContent = `
+      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+      #ember-layout-wrap {
+        background: var(--bg);
+        font-family: 'Outfit', 'Lato', sans-serif;
+      }
+
+      /* ── INTRO SCREEN ── */
+      /* FIX 1: Shifted content upward with margin-bottom to optically center higher */
+      #ember-intro {
+        position: absolute; inset: 0; z-index: 50;
+        background: var(--bg);
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 1.1rem;
+        padding-bottom: 15vh;
+      }
+      .ei-flame {
+        font-size: 3rem; line-height: 1;
+        animation: ei-rise 0.7s cubic-bezier(.22,1,.36,1) both;
+        filter: drop-shadow(0 0 18px var(--accent));
+      }
+      /* FIX 1: Much larger logo text */
+      .ei-name {
+        font-family: 'Cinzel', serif;
+        font-size: 3.8rem; font-weight: 600;
+        color: var(--accent); letter-spacing: .12em;
+        opacity: 0; animation: ei-up 0.6s ease 0.35s both;
+        line-height: 1;
+      }
+      .ei-sub {
+        font-size: .85rem; font-weight: 400;
+        letter-spacing: .22em; text-transform: uppercase;
+        color: var(--text3);
+        opacity: 0; animation: ei-up 0.5s ease 0.65s both;
+      }
+      .ei-bar {
+        width: 160px; height: 2px;
+        background: var(--border); border-radius: 2px; overflow: hidden;
+        opacity: 0; animation: ei-up 0.4s ease 0.85s both;
+        margin-top: .4rem;
+      }
+      .ei-bar-fill {
+        height: 100%; width: 0; border-radius: 2px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        animation: ei-fill 1s ease 1s both;
+      }
+      @keyframes ei-rise  { from { transform: translateY(16px); opacity:0 } to { transform:none; opacity:1 } }
+      @keyframes ei-up    { from { transform: translateY(10px); opacity:0 } to { transform:none; opacity:1 } }
+      @keyframes ei-fill  { to { width: 100% } }
+
+      /* ── HEADER ── */
+      #ember-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: .7rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--nav); flex-shrink: 0;
+      }
+      #ember-header .eh-brand {
+        display: flex; align-items: center; gap: .6rem;
+      }
+      #ember-header .eh-flame {
+        font-size: 1.3rem;
+        filter: drop-shadow(0 0 6px var(--accent));
+        animation: flicker 3s ease-in-out infinite;
+      }
+      #ember-header .eh-title {
+        font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600;
+        color: var(--accent); letter-spacing: .06em;
+      }
+      #ember-header .eh-status {
+        display: flex; align-items: center; gap: .35rem;
+        font-size: .72rem; color: var(--text3); font-weight: 400;
+      }
+      .eh-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--online);
+        box-shadow: 0 0 5px var(--online);
+        animation: pulse-dot 2.2s ease-in-out infinite;
+      }
+      .eh-badge {
+        font-size: .68rem; font-weight: 600;
+        padding: .15rem .55rem; border-radius: 20px;
+        background: var(--accentbg); color: var(--accent);
+        border: 1px solid var(--border2); letter-spacing: .04em;
+      }
+      @keyframes flicker  { 0%,100%{filter:drop-shadow(0 0 6px var(--accent))} 50%{filter:drop-shadow(0 0 12px var(--accent2))} }
+      @keyframes pulse-dot{ 0%,100%{opacity:1} 50%{opacity:.35} }
+
+      /* ── MESSAGES AREA ── */
+      #ember-msgs {
+        flex: 1; overflow-y: auto;
+        padding: 1.25rem 1.25rem 1rem;
+        display: flex; flex-direction: column; gap: 1rem;
+        scroll-behavior: smooth;
+      }
+      #ember-msgs::-webkit-scrollbar { width: 4px; }
+      #ember-msgs::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+      /* welcome */
+      .em-welcome {
+        margin: auto; text-align: center;
+        display: flex; flex-direction: column; align-items: center; gap: .85rem;
+        padding: 2rem 1rem; max-width: 340px;
+        animation: ei-up .5s ease both;
+      }
+      .em-welcome-icon {
+        width: 52px; height: 52px; border-radius: 16px;
+        background: var(--accentbg); border: 1px solid var(--border2);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.5rem;
+        filter: drop-shadow(0 0 10px var(--accent));
+      }
+      .em-welcome h2 {
+        font-family: 'Cinzel', serif; font-size: 1.15rem;
+        color: var(--text); font-weight: 600; letter-spacing: .04em;
+      }
+      .em-welcome p {
+        font-size: .83rem; color: var(--text2); line-height: 1.65;
+      }
+      .em-suggestions {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: .5rem; width: 100%; margin-top: .25rem;
+      }
+      .em-sug {
+        padding: .6rem .75rem;
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: 10px; font-size: .77rem; color: var(--text2);
+        text-align: left; cursor: pointer; line-height: 1.45;
+        font-family: 'Outfit','Lato',sans-serif;
+        transition: border-color .18s, background .18s, color .18s;
+      }
+      .em-sug:hover {
+        border-color: var(--accent); background: var(--accentbg); color: var(--accent);
+      }
+
+      /* message rows */
+      .em-row { display: flex; gap: .65rem; animation: em-in .25s ease both; }
+      .em-row.em-mine { flex-direction: row-reverse; }
+      @keyframes em-in { from{transform:translateY(6px);opacity:0} to{transform:none;opacity:1} }
+
+      .em-av {
+        width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center; font-size: .8rem;
+      }
+      .em-av.em-av-ai {
+        background: var(--accentbg); border: 1px solid var(--border2);
+        filter: drop-shadow(0 0 4px var(--accent));
+      }
+      .em-av.em-av-user {
+        background: var(--accent); color: #fff;
+        font-size: .7rem; font-weight: 700; font-family: 'Cinzel', serif;
+      }
+
+      .em-body { max-width: 76%; display: flex; flex-direction: column; gap: .2rem; }
+      .em-row.em-mine .em-body { align-items: flex-end; }
+
+      .em-sender {
+        font-size: .68rem; color: var(--text3);
+        letter-spacing: .04em; padding: 0 .1rem;
+      }
+
+      .em-bubble {
+        padding: .65rem .95rem; border-radius: 16px;
+        font-size: .875rem; line-height: 1.65; word-break: break-word;
+      }
+      .em-row:not(.em-mine) .em-bubble {
+        background: var(--card); border: 1px solid var(--border);
+        color: var(--text); border-radius: 4px 16px 16px 16px;
+      }
+      .em-row.em-mine .em-bubble {
+        background: var(--accent); color: #fff;
+        border-radius: 16px 4px 16px 16px;
+      }
+
+      .em-bubble pre {
+        background: var(--bg2); border: 1px solid var(--border);
+        border-radius: 8px; padding: .65rem .85rem;
+        overflow-x: auto; font-size: .78rem; line-height: 1.55;
+        margin: .4rem 0; font-family: monospace; color: var(--accent2);
+        white-space: pre-wrap;
+      }
+      .em-bubble code {
+        background: var(--bg2); padding: .1em .3em;
+        border-radius: 4px; font-family: monospace;
+        font-size: .82em; color: var(--accent);
+      }
+
+      /* typing dots */
+      .em-typing {
+        display: flex; align-items: center; gap: 4px; padding: .5rem 0;
+      }
+      .em-typing span {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--accent); opacity: .5;
+        animation: em-dot 1.1s ease-in-out infinite;
+      }
+      .em-typing span:nth-child(2){ animation-delay: .18s; }
+      .em-typing span:nth-child(3){ animation-delay: .36s; }
+      @keyframes em-dot { 0%,80%,100%{transform:scale(.55);opacity:.3} 40%{transform:scale(1);opacity:1} }
+
+      /* ── INPUT ROW ── */
+      #ember-input-area {
+        padding: .85rem 1.25rem 1rem;
+        border-top: 1px solid var(--border);
+        background: var(--nav); flex-shrink: 0;
+      }
+      #ember-input-wrap {
+        display: flex; align-items: center; gap: .5rem;
+        background: var(--input); border: 1px solid var(--border2);
+        border-radius: 14px; padding: .35rem .4rem .35rem .95rem;
+        transition: border-color .2s, box-shadow .2s;
+      }
+      #ember-input-wrap:focus-within {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--shadow);
+      }
+      #ember-ai-inp {
+        flex: 1; background: transparent; border: none; outline: none;
+        color: var(--text); font-family: 'Outfit','Lato',sans-serif;
+        font-size: .875rem; resize: none; line-height: 1.5; max-height: 110px;
+      }
+      #ember-ai-inp::placeholder { color: var(--text3); }
+      #ember-send-btn {
+        width: 36px; height: 36px; border-radius: 10px;
+        border: none; cursor: pointer; flex-shrink: 0;
+        background: var(--accent); color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        transition: opacity .15s, transform .15s;
+        box-shadow: 0 2px 10px var(--shadow);
+      }
+      #ember-send-btn:hover  { opacity: .88; transform: scale(1.04); }
+      #ember-send-btn:active { transform: scale(.95); }
+      .em-hint {
+        text-align: center; margin-top: .5rem;
+        font-size: .68rem; color: var(--text3); letter-spacing: .03em;
+      }
+      .em-hint span { color: var(--accent); font-weight: 600; }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // FIX 3: Only show intro once per session
+  const showIntro = !_emberIntroShown;
+  if (showIntro) _emberIntroShown = true;
+
+  wrap.innerHTML = `
+    ${showIntro ? `
+    <!-- Intro overlay (shown once per refresh) -->
+    <div id="ember-intro">
+      <div class="ei-flame">
+        <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg>
+      </div>
+      <div class="ei-name">EmberGPT</div>
+      <div class="ei-sub">Your intelligent companion</div>
+      <div class="ei-bar"><div class="ei-bar-fill"></div></div>
+    </div>` : ''}
+
+    <!-- Header -->
+    <div id="ember-header">
+      <div class="eh-brand">
+        <div class="eh-flame">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg>
+        </div>
+        <div class="eh-title">EmberGPT</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.65rem;">
+        <div class="eh-status"><div class="eh-dot"></div> online</div>
+        <div class="eh-badge">AI · v1</div>
+      </div>
     </div>
 
-    <div id="ember-msgs" class="chat-messages" style="height:60vh;"></div>
+    <!-- Messages -->
+    <div id="ember-msgs">
+      <div class="em-welcome" id="ember-welcome">
+        <div class="em-welcome-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg>
+        </div>
+        <h2>Ask me anything</h2>
+        <p>I'm Ember — your AI built right into this app. Fast, sharp, and always on.</p>
+        <div class="em-suggestions">
+          <button class="em-sug" onclick="emberSuggest(this)">Write me a short poem about fire</button>
+          <button class="em-sug" onclick="emberSuggest(this)">Explain quantum computing simply</button>
+          <button class="em-sug" onclick="emberSuggest(this)">Help me brainstorm project ideas</button>
+          <button class="em-sug" onclick="emberSuggest(this)">What are good habits to build?</button>
+        </div>
+      </div>
+    </div>
 
-    <div class="chat-input-row">
-      <input 
-        id="ember-inp" 
-        class="chat-inp" 
-        placeholder="Ask Ember..." 
-        onkeydown="if(event.key==='Enter'){event.preventDefault();sendEmber();}"
-      />
-      <button class="send-btn" onclick="sendEmber()">
-        ➤
-      </button>
+    <!-- Input -->
+    <div id="ember-input-area">
+      <div id="ember-input-wrap">
+        <textarea
+          id="ember-ai-inp"
+          placeholder="Ask Ember anything…"
+          rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendEmberMsg();}"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,110)+'px';"
+        ></textarea>
+        <button id="ember-send-btn" onclick="sendEmberMsg()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+      <div class="em-hint">Powered by <span>Ember AI</span> · Press Enter to send</div>
     </div>
   `;
+
+  main.appendChild(wrap);
+
+  // FIX 3: Dismiss intro only if it's showing
+  if (showIntro) {
+    setTimeout(() => {
+      const intro = document.getElementById('ember-intro');
+      if (intro) {
+        intro.style.transition = 'opacity .45s ease';
+        intro.style.opacity = '0';
+        setTimeout(() => intro.remove(), 450);
+      }
+    }, 2400);
+  }
 }
 
-async function sendEmber(){
-  const inp = document.getElementById('ember-inp');
-  const msgBox = document.getElementById('ember-msgs');
+function emberSuggest(btn) {
+  const inp = document.getElementById('ember-ai-inp');
+  if (inp) {
+    inp.value = btn.textContent;
+    inp.style.height = 'auto';
+    inp.style.height = Math.min(inp.scrollHeight, 110) + 'px';
+    sendEmberMsg();
+  }
+}
+
+const _emberHistory = [];
+
+async function sendEmberMsg() {
+  const inp = document.getElementById('ember-ai-inp');
+  const msgs = document.getElementById('ember-msgs');
+  if (!inp || !msgs) return;
 
   const text = inp.value.trim();
-  if(!text) return;
+  if (!text) return;
 
-  // show user message
-  msgBox.innerHTML += `
-    <div class="msg-row mine">
-      <div class="msg-bubble">${escHtml(text)}</div>
-    </div>
-  `;
+  // Hide welcome screen
+  const welcome = document.getElementById('ember-welcome');
+  if (welcome) welcome.remove();
+
+  // User bubble
+  const userEl = document.createElement('div');
+  userEl.className = 'em-row em-mine';
+  const userInitialChar = (state.user?.name || 'G').charAt(0).toUpperCase();
+  userEl.innerHTML = `
+    <div class="em-av em-av-user">${userInitialChar}</div>
+    <div class="em-body">
+      <div class="em-sender">You</div>
+      <div class="em-bubble">${escHtml(text)}</div>
+    </div>`;
+  msgs.appendChild(userEl);
 
   inp.value = '';
+  inp.style.height = 'auto';
   scrollToBottom('ember-msgs');
 
-  // loading message
-  const loadingId = 'loading-' + Date.now();
-  msgBox.innerHTML += `
-    <div class="msg-row">
-      <div class="msg-bubble" id="${loadingId}">Thinking...</div>
-    </div>
-  `;
+  _emberHistory.push({ role: 'user', content: text });
+
+  // Typing indicator
+  const typingEl = document.createElement('div');
+  typingEl.className = 'em-row';
+  typingEl.id = 'ember-typing';
+  typingEl.innerHTML = `
+    <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
+    <div class="em-body">
+      <div class="em-sender">Ember</div>
+      <div class="em-bubble"><div class="em-typing"><span></span><span></span><span></span></div></div>
+    </div>`;
+  msgs.appendChild(typingEl);
   scrollToBottom('ember-msgs');
 
   try {
-    const res = await fetch('/api/chat', { // 👈 your Vercel function
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ message: text })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `You are Ember, a sharp, warm, and confident AI assistant embedded inside a social app called Ember. You are direct, witty, and genuinely helpful. Your responses are concise but substantive. Never mention Claude or Anthropic — you are Ember. Use markdown for code (backticks) and bold when helpful. Keep answers tight and human.`,
+        messages: _emberHistory
+      })
     });
 
     const data = await res.json();
+    const reply = data.content?.map(b => b.text || '').join('') || 'Something went wrong.';
+    _emberHistory.push({ role: 'assistant', content: reply });
 
-    const reply = data.reply || 'No response';
+    const t = document.getElementById('ember-typing');
+    if (t) t.remove();
 
-    // replace loading with real reply
-    document.getElementById(loadingId).innerHTML = escHtml(reply);
+    const aiEl = document.createElement('div');
+    aiEl.className = 'em-row';
+    aiEl.innerHTML = `
+      <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
+      <div class="em-body">
+        <div class="em-sender">Ember</div>
+        <div class="em-bubble">${emberFormat(reply)}</div>
+      </div>`;
+    msgs.appendChild(aiEl);
 
   } catch (err) {
-    document.getElementById(loadingId).innerHTML = 'Error talking to AI.';
+    const t = document.getElementById('ember-typing');
+    if (t) t.remove();
+    const errEl = document.createElement('div');
+    errEl.className = 'em-row';
+    errEl.innerHTML = `
+      <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
+      <div class="em-body">
+        <div class="em-sender">Ember</div>
+        <div class="em-bubble" style="color:var(--danger)">Couldn't reach Ember right now. Check your connection.</div>
+      </div>`;
+    msgs.appendChild(errEl);
   }
 
   scrollToBottom('ember-msgs');
+}
+
+function emberFormat(t) {
+  t = t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  t = t.replace(/```[\w]*\n?([\s\S]*?)```/g, '<pre>$1</pre>');
+  t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+  t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  t = t.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  t = t.replace(/\n/g, '<br>');
+  return t;
 }
 
 function fabAction(){
@@ -708,7 +1100,6 @@ function fabAction(){
   if(p==='feed') showPostModal();
   else if(p==='polls') showPollModal();
   else if(p==='chats') openCommunityChat();
-  // NOTE: projects FAB is removed; host project is via topbar button
 }
 
 /* ===== HELPERS ===== */
@@ -719,15 +1110,15 @@ function timeAgo(ts){
   if(d<86400)return Math.floor(d/3600)+'h ago';
   return Math.floor(d/86400)+'d ago';
 }
-function userName(uid){
-  if(!uid)return 'Unknown';
-  if(uid==='me'||uid===state.user?.id)return state.user?.name||'Guest';
-  return state.users[uid]?.name||'User';
+function userName(uid2){
+  if(!uid2)return 'Unknown';
+  if(uid2==='me'||uid2===state.user?.id)return state.user?.name||'Guest';
+  return state.users[uid2]?.name||'User';
 }
-function userInitial(uid){return userName(uid).charAt(0).toUpperCase();}
+function userInitial(uid2){return userName(uid2).charAt(0).toUpperCase();}
 const AV_COLORS=['#D67933','#2772A3','#7B68EE','#5CBBAA','#D4789A','#E8924A','#4A9DCE'];
-function avColor(uid){if(!uid)return AV_COLORS[0];let h=0;for(let i=0;i<uid.length;i++)h+=uid.charCodeAt(i);return AV_COLORS[h%AV_COLORS.length];}
-function avStyle(uid){return `background:${avColor(uid)}`;}
+function avColor(uid2){if(!uid2)return AV_COLORS[0];let h=0;for(let i=0;i<uid2.length;i++)h+=uid2.charCodeAt(i);return AV_COLORS[h%AV_COLORS.length];}
+function avStyle(uid2){return `background:${avColor(uid2)}`;}
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
@@ -761,7 +1152,6 @@ function postHTML(p){
       mediaEl=`<img class="post-media" src="${p.mediaUrl}" alt="post image" loading="lazy"/>`;
     }
   } else {
-    // Placeholder gradient for sample posts without actual media
     mediaEl=`<div style="width:100%;height:160px;background:linear-gradient(135deg,var(--bg2),var(--bg3));display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:.6;">🖼️</div>`;
   }
   return `<div class="post-card" id="post-${p.id}">
@@ -857,7 +1247,6 @@ function handlePostMedia(e){
     const box=document.getElementById('upload-box');
     const wrap=document.getElementById('upload-thumb-wrap');
     if(box) box.classList.add('has-media');
-    // Hide the icon/text inside the box once media is selected
     const icon=box.querySelector('svg');
     const span=box.querySelector('span');
     const small=box.querySelector('small');
@@ -894,7 +1283,6 @@ function renderChats(){
   const content=document.getElementById('content');
   const main=document.getElementById('main');
 
-  // Remove any old chat layout
   const old=document.getElementById('chat-layout-wrap');if(old)old.remove();
   content.style.display='none';
 
@@ -905,7 +1293,6 @@ function renderChats(){
   wrap.style.overflow='hidden';
   main.appendChild(wrap);
 
-  // DM sidebar
   const dmSide=document.createElement('div');
   dmSide.id='chat-sidebar';
   let dmHTML=`<div style="padding:.75rem 1rem .4rem;font-size:.75rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;">Direct Messages</div>`;
@@ -913,7 +1300,7 @@ function renderChats(){
     const msgs=state.dms[uid2]||[];
     const last=msgs.filter(m=>!m.deleted)[msgs.filter(m=>!m.deleted).length-1];
     return `<div class="dm-item" onclick="openDM('${uid2}')" id="dm-${uid2}">
-      <div class="dm-av" style="${avStyle(uid2)}">${u.name.charAt(0)}<div class="dm-online"></div></div>
+      <div class="dm-av" style="${avStyle(uid2)};width:38px;height:38px;">${u.name.charAt(0)}<div class="dm-online"></div></div>
       <div style="flex:1;min-width:0">
         <div class="dm-name">${u.name}</div>
         <div class="dm-preview">${last?escHtml(last.text):'Say hello!'}</div>
@@ -923,7 +1310,6 @@ function renderChats(){
   }).join('');
   dmSide.innerHTML=dmHTML;
 
-  // Chat window placeholder
   const cWin=document.createElement('div');
   cWin.className='chat-window';
   cWin.id='chat-window';
@@ -1016,7 +1402,6 @@ function sendDM(uid2){
   saveState();inp.value='';
   const c=document.getElementById('dm-msgs');
   if(c){c.innerHTML=renderDMMessages(uid2);scrollToBottom('dm-msgs');}
-  // Simulated reply
   setTimeout(()=>{
     const replies=['Sounds great!','Interesting! Tell me more.','Ha, totally! 😄','🔥','That makes sense!','Wow, really?'];
     state.dms[uid2].push({id:'dm'+uid(),from:uid2,text:replies[Math.floor(Math.random()*replies.length)],time:Date.now(),deleted:false});
@@ -1084,7 +1469,6 @@ function commKeydown(e){
 function commInput(el){
   el.style.height='auto';
   el.style.height=Math.min(el.scrollHeight,100)+'px';
-  // @ tagging hint
   const val=el.value;
   const atIdx=val.lastIndexOf('@');
   const hint=document.getElementById('tag-hint');
@@ -1264,7 +1648,7 @@ function openProjectChat(pid){
     if(!state.projectChats[pid])state.projectChats[pid]=[];
     cWin.innerHTML=`
       <div class="chat-header">
-        <div class="dm-av" style="background:var(--blue);">P</div>
+        <div class="dm-av" style="background:var(--blue);width:34px;height:34px;">P</div>
         <div>
           <div style="font-weight:700;font-size:.9rem;">${escHtml(p.name)}</div>
           <div style="font-size:.75rem;color:var(--text3);">${p.members.length} member${p.members.length!==1?'s':''}</div>
