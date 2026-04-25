@@ -402,6 +402,12 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         Polls
       </button>
+      <button class="nav-item" onclick="navigate('ember')" id="nav-ember">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <path d="M12 2s4 4 4 8-2 6-4 8c-2-2-4-4-4-8s4-8 4-8z"/>
+  </svg>
+  Ember
+</button>
       <button class="nav-item" onclick="navigate('projects')" id="nav-projects">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><polyline points="3,7 12,11 21,7"/><line x1="12" y1="11" x2="12" y2="22"/></svg>
         Projects
@@ -578,7 +584,7 @@ function navigate(page){
   document.querySelectorAll('.mob-nav-item').forEach(e=>e.classList.remove('active'));
   const mi=document.getElementById('mob-nav-'+page);if(mi)mi.classList.add('active');
 
-  const titles={feed:'Feed',chats:'Chats',polls:'Polls',projects:'Projects',profile:'Profile',settings:'Settings'};
+  const titles={feed:'Feed',chats:'Chats',polls:'Polls',projects:'Projects',profile:'Profile',settings:'Settings',ember:'Ember AI'};
   document.getElementById('topbar-title').textContent=titles[page]||page;
 
   // Host Project button — only visible on Projects page
@@ -619,7 +625,82 @@ function navigate(page){
     case 'projects': renderProjects(); break;
     case 'profile': renderProfile(state.user?.id||'me'); break;
     case 'settings': renderSettings(); break;
+    case 'ember': renderEmber(); break;
   }
+}
+
+function renderEmber(){
+  const c = document.getElementById('content');
+
+  c.innerHTML = `
+    <div class="chat-header" style="margin-bottom:1rem;">
+      <div style="font-weight:700;">🔥 Ember AI</div>
+      <div style="font-size:.8rem;color:var(--text3);">Ask anything</div>
+    </div>
+
+    <div id="ember-msgs" class="chat-messages" style="height:60vh;"></div>
+
+    <div class="chat-input-row">
+      <input 
+        id="ember-inp" 
+        class="chat-inp" 
+        placeholder="Ask Ember..." 
+        onkeydown="if(event.key==='Enter'){event.preventDefault();sendEmber();}"
+      />
+      <button class="send-btn" onclick="sendEmber()">
+        ➤
+      </button>
+    </div>
+  `;
+}
+
+async function sendEmber(){
+  const inp = document.getElementById('ember-inp');
+  const msgBox = document.getElementById('ember-msgs');
+
+  const text = inp.value.trim();
+  if(!text) return;
+
+  // show user message
+  msgBox.innerHTML += `
+    <div class="msg-row mine">
+      <div class="msg-bubble">${escHtml(text)}</div>
+    </div>
+  `;
+
+  inp.value = '';
+  scrollToBottom('ember-msgs');
+
+  // loading message
+  const loadingId = 'loading-' + Date.now();
+  msgBox.innerHTML += `
+    <div class="msg-row">
+      <div class="msg-bubble" id="${loadingId}">Thinking...</div>
+    </div>
+  `;
+  scrollToBottom('ember-msgs');
+
+  try {
+    const res = await fetch('/api/chat', { // 👈 your Vercel function
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message: text })
+    });
+
+    const data = await res.json();
+
+    const reply = data.reply || 'No response';
+
+    // replace loading with real reply
+    document.getElementById(loadingId).innerHTML = escHtml(reply);
+
+  } catch (err) {
+    document.getElementById(loadingId).innerHTML = 'Error talking to AI.';
+  }
+
+  scrollToBottom('ember-msgs');
 }
 
 function fabAction(){
