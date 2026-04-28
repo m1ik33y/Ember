@@ -68,7 +68,6 @@
 html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;}
 
 /* ===== AUTH ===== */
-/* FIX 1: auth-page is a full-screen centered flex container */
 #auth-page{
   position:fixed;inset:0;
   display:flex;align-items:center;justify-content:center;
@@ -156,7 +155,6 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
 .icon-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:transparent;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .icon-btn:hover{background:var(--bg2);color:var(--text);}
 
-/* Host Project button in topbar */
 .host-project-btn{display:none;align-items:center;gap:.45rem;padding:.45rem .85rem;border-radius:10px;background:var(--accent);border:none;color:#fff;font-family:'Lato',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;flex-shrink:0;}
 .host-project-btn:hover{opacity:.9;transform:translateY(-1px);}
 .host-project-btn svg{width:14px;height:14px;}
@@ -359,27 +357,17 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
 @media(max-width:768px){
   #sidebar{display:none;}
   #ember-input-area{
-    position:fixed;
-    bottom:54px;
-    left:0;right:0;
-    padding:.5rem .75rem;
-    background:var(--nav);
-    border-top:1px solid var(--navborder);
-    z-index:300;
+    position:fixed;bottom:54px;left:0;right:0;
+    padding:.5rem .75rem;background:var(--nav);
+    border-top:1px solid var(--navborder);z-index:300;
   }
-  #ember-input-area.ember-intro-hidden{
-    opacity:0;pointer-events:none;visibility:hidden;
-  }
+  #ember-input-area.ember-intro-hidden{opacity:0;pointer-events:none;visibility:hidden;}
   #mobile-nav{display:block;}
   #app{flex-direction:column;}
   #main{height:calc(100vh - 58px);}
   #content{padding:.75rem;}
   #fab-btn{bottom:72px;right:16px;}
-  #chat-sidebar{
-    width:100%;min-width:0;border-right:none;
-    border-bottom:1px solid var(--navborder);
-    max-height:40vh;
-  }
+  #chat-sidebar{width:100%;min-width:0;border-right:none;border-bottom:1px solid var(--navborder);max-height:40vh;}
   .chat-layout{flex-direction:column;}
   .chat-window{height:60vh;}
   .project-card{flex-direction:column;}
@@ -399,36 +387,27 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
 </head>
 <body data-theme="light-amber">
 
-<!-- =====================================================
-     FIX 1: AUTH PAGE — proper full-screen centered wrapper
-     ===================================================== -->
+<!-- AUTH PAGE -->
 <div id="auth-page">
-  <!-- Background glow -->
   <div class="auth-glow"></div>
-
-  <!-- Centered card -->
   <div class="auth-box">
     <div class="ember-logo">Ember</div>
     <div class="ember-tagline">Where stories glow</div>
 
-    <!-- Tab switcher -->
     <div class="auth-tabs">
       <button class="auth-tab active" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
       <button class="auth-tab" id="tab-login" onclick="switchTab('login')">Sign In</button>
     </div>
 
-    <!-- Error banner -->
     <div class="auth-error" id="auth-error"></div>
 
-    <!-- Sign-up fields -->
     <div id="signup-fields">
-      <input class="auth-input" id="username" placeholder="Username" autocomplete="username"/>
+      <input class="auth-input" id="username" placeholder="Display Name" autocomplete="username"/>
       <input class="auth-input" id="email-su" type="email" placeholder="Email" autocomplete="email"/>
       <input class="auth-input" id="password-su" type="password" placeholder="Password (min 6 chars)" autocomplete="new-password"/>
       <button class="btn-guest" id="btn-signup" onclick="signUp()">Create Account</button>
     </div>
 
-    <!-- Login fields -->
     <div id="login-fields" style="display:none;">
       <input class="auth-input" id="email-li" type="email" placeholder="Email" autocomplete="email"/>
       <input class="auth-input" id="password-li" type="password" placeholder="Password" autocomplete="current-password"/>
@@ -446,7 +425,7 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
   </div>
 </div>
 
-<!-- COMMUNITY CHAT PAGE (fullscreen overlay) -->
+<!-- COMMUNITY CHAT PAGE -->
 <div id="community-page">
   <div class="community-header">
     <button class="back-btn" onclick="closeCommunityChat()">
@@ -473,7 +452,6 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
 
 <!-- APP -->
 <div id="app">
-  <!-- SIDEBAR -->
   <nav id="sidebar">
     <div class="sidebar-logo">Ember</div>
     <div class="sidebar-nav">
@@ -490,9 +468,7 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
         Polls
       </button>
       <button class="nav-item" onclick="navigate('ember')" id="nav-ember">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M12 2s4 4 4 8-2 6-4 8c-2-2-4-4-4-8s4-8 4-8z"/>
-        </svg>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2s4 4 4 8-2 6-4 8c-2-2-4-4-4-8s4-8 4-8z"/></svg>
         Ember
       </button>
       <button class="nav-item" onclick="navigate('projects')" id="nav-projects">
@@ -519,7 +495,6 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
     </div>
   </nav>
 
-  <!-- MAIN -->
   <div id="main">
     <div id="topbar">
       <div class="topbar-title" id="topbar-title">Feed</div>
@@ -536,7 +511,6 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
     <div id="content"></div>
   </div>
 
-  <!-- MOBILE NAV -->
   <nav id="mobile-nav">
     <div class="mob-nav-items">
       <button class="mob-nav-item active" onclick="navigate('feed')" id="mob-nav-feed">
@@ -563,23 +537,23 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
   </nav>
 </div>
 
-<!-- FAB -->
 <button id="fab-btn" onclick="fabAction()">+</button>
-
-<!-- TOAST -->
 <div id="toast"></div>
 
-<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-/* ===== SUPABASE CLIENT ===== */
+/* =====================================================
+   SUPABASE CLIENT
+   ===================================================== */
 const supabaseClient = supabase.createClient(
   "https://ksdxieuskfkljtrtaksp.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzZHhpZXVza2ZrbGp0cnRha3NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMTU4ODgsImV4cCI6MjA5Mjc5MTg4OH0.UrZYqpqNz7j3mlcxoJfpAmvTXaFaHRPA_dB-wOXycSU"
 );
 
-/* ===== AUTH UI HELPERS ===== */
+/* =====================================================
+   AUTH UI HELPERS
+   ===================================================== */
 function switchTab(tab) {
   const isSignup = tab === 'signup';
   document.getElementById('tab-signup').classList.toggle('active', isSignup);
@@ -602,30 +576,37 @@ function setAuthLoading(btnId, loading, label) {
   btn.textContent = loading ? 'Please wait…' : label;
 }
 
-/* ===================================================
-   FIX 2: SIGN UP — fetch profile after login to populate
-   state.user with the real Supabase uid + username
-   =================================================== */
+/* =====================================================
+   SIGN UP
+   - Stores display name in:
+     1. Supabase auth metadata (data.display_name)
+     2. profiles.username column
+   ===================================================== */
 async function signUp() {
   showAuthError('');
-  const username = document.getElementById('username').value.trim();
-  const email    = document.getElementById('email-su').value.trim();
-  const password = document.getElementById('password-su').value;
+  const displayName = document.getElementById('username').value.trim();
+  const email       = document.getElementById('email-su').value.trim();
+  const password    = document.getElementById('password-su').value;
 
-  if (!username) return showAuthError('Please enter a username.');
-  if (!email)    return showAuthError('Please enter your email.');
+  if (!displayName) return showAuthError('Please enter a display name.');
+  if (!email)       return showAuthError('Please enter your email.');
   if (password.length < 6) return showAuthError('Password must be at least 6 characters.');
 
   setAuthLoading('btn-signup', true, 'Create Account');
 
-  // 1. Sign up
-  const { error: signUpError } = await supabaseClient.auth.signUp({ email, password });
+  // 1. Sign up — store display_name in auth metadata
+  const { error: signUpError } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: { data: { display_name: displayName } }
+  });
+
   if (signUpError) {
     setAuthLoading('btn-signup', false, 'Create Account');
     return showAuthError(signUpError.message);
   }
 
-  // 2. Sign in immediately (Supabase may auto-confirm in dev, or require email confirm)
+  // 2. Sign in immediately
   const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({ email, password });
   if (loginError) {
     setAuthLoading('btn-signup', false, 'Create Account');
@@ -634,34 +615,29 @@ async function signUp() {
 
   const user = loginData.user;
 
-  // 3. Insert profile (must succeed before continuing)
-  const { error: profileError } = await supabaseClient.from('profiles').insert({ 
-    id: user.id, 
-    username: username 
-  });
+  // 3. Upsert profile row with username = displayName
+  //    NOTE: Your RLS policy must allow INSERT where id = auth.uid()
+  const { error: profileError } = await supabaseClient
+    .from('profiles')
+    .upsert({ id: user.id, username: displayName }, { onConflict: 'id' });
 
   if (profileError) {
     setAuthLoading('btn-signup', false, 'Create Account');
-    console.error('Profile creation error:', profileError);
+    console.error('Profile upsert error:', profileError);
     return showAuthError('Failed to create profile: ' + profileError.message);
   }
 
-  // 4. Set state with REAL uid from Supabase
-  state.user = {
-    id: user.id,
-    name: username,
-    bio: '',
-    isGuest: false
-  };
-
+  state.user = { id: user.id, name: displayName, bio: '', isGuest: false };
   setAuthLoading('btn-signup', false, 'Create Account');
   saveState();
   await enterApp();
 }
 
-/* ===================================================
-   FIX 2: LOGIN — fetch the profile row to get username
-   =================================================== */
+/* =====================================================
+   LOGIN
+   - Fetches display name from profiles.username
+   - Falls back to auth metadata, then email prefix
+   ===================================================== */
 async function login() {
   showAuthError('');
   const email    = document.getElementById('email-li').value.trim();
@@ -680,37 +656,27 @@ async function login() {
 
   const user = data.user;
 
-  // Fetch the profile row so we get the stored username
-  const { data: profile, error: profileError } = await supabaseClient
+  // Prefer profiles.username, fall back to auth metadata, then email prefix
+  const { data: profile } = await supabaseClient
     .from('profiles')
     .select('username')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
-  if (profileError) {
-    console.error('Profile fetch error:', profileError);
-    setAuthLoading('btn-login', false, 'Sign In');
-    return showAuthError('Profile not found. Please sign up first.');
-  }
+  const displayName =
+    profile?.username ||
+    user.user_metadata?.display_name ||
+    email.split('@')[0];
 
-  // Use profile username
-  const displayName = profile?.username || email.split('@')[0];
-
-  state.user = {
-    id: user.id,
-    name: displayName,
-    bio: '',
-    isGuest: false
-  };
-
+  state.user = { id: user.id, name: displayName, bio: '', isGuest: false };
   setAuthLoading('btn-login', false, 'Sign In');
   saveState();
   await enterApp();
 }
-</script>
 
-<script>
-/* ===== STATE ===== */
+/* =====================================================
+   STATE
+   ===================================================== */
 let state = {
   theme: 'light-amber',
   user: null,
@@ -734,14 +700,8 @@ const SAMPLE_USERS = [
   {id:'u4',name:'Iris M.',bio:'Artist | Photographer',isGuest:false},
 ];
 
-function initSampleData(){
-  SAMPLE_USERS.forEach(u=>{ state.users[u.id]=u; });
-  state.posts = [
-    {id:'p1',uid:'u1',text:'Just finished a new illustration series inspired by dusk light. Soft ambers and deep blues — something about that liminal hour feels magical. ✨',title:'Dusk Series',mediaUrl:'',mediaType:'image',time:Date.now()-3600000*2,likes:[],comments:[]},
-    {id:'p2',uid:'u2',text:'Working on an open-source project for collaborative worldbuilding. Drop a ⚡ if you want early access!',title:'Open Source Worldbuilding',mediaUrl:'',mediaType:'image',time:Date.now()-3600000*5,likes:[],comments:[]},
-    {id:'p3',uid:'u3',text:'Hot take: afternoon coffee tastes better when you\'re procrastinating. ☕ Change my mind.',title:'Afternoon Thoughts',mediaUrl:'',mediaType:'image',time:Date.now()-3600000*18,likes:[],comments:[]},
-    {id:'p4',uid:'u4',text:'Golden hour shots from yesterday\'s walk. The light was absolutely unreal — nature as a painter. 🌅',title:'Golden Hour',mediaUrl:'',mediaType:'image',time:Date.now()-3600000*26,likes:[],comments:[]},
-  ];
+function initSampleData() {
+  SAMPLE_USERS.forEach(u => { state.users[u.id] = u; });
   state.polls = [
     {id:'pl1',uid:'u1',category:'General',question:'What time of day are you most creative?',sub:'Curious about the community\'s rhythms',options:['Morning','Afternoon','Evening','Late night'],votes:{},time:Date.now()-3600000*4},
     {id:'pl2',uid:'u2',category:'Sports',question:'Best sport for building mental resilience?',sub:'Inspired by some reading I did this week',options:['Swimming','Rock climbing','Martial arts','Long-distance running'],votes:{},time:Date.now()-3600000*9},
@@ -769,107 +729,1026 @@ function initSampleData(){
   saveState();
 }
 
-/* ===== STORAGE ===== */
-function ls(k,v){if(v===undefined){try{return JSON.parse(localStorage.getItem(k));}catch{return null;}}localStorage.setItem(k,JSON.stringify(v));}
-function saveState(){ls('ember_data2',state);}
+/* =====================================================
+   STORAGE
+   ===================================================== */
+function ls(k, v) {
+  if (v === undefined) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }
+  localStorage.setItem(k, JSON.stringify(v));
+}
+function saveState() { ls('ember_data2', state); }
 
-/* ===== THEME ===== */
-function setTheme(t,el){
-  state.theme=t;
-  document.body.setAttribute('data-theme',t);
-  document.querySelectorAll('.theme-btn').forEach(e=>e.classList.remove('active'));
-  if(el)el.classList.add('active');
+/* =====================================================
+   THEME
+   ===================================================== */
+function setTheme(t, el) {
+  state.theme = t;
+  document.body.setAttribute('data-theme', t);
+  document.querySelectorAll('.theme-btn').forEach(e => e.classList.remove('active'));
+  if (el) el.classList.add('active');
   saveState();
 }
 
-/* ===== AUTH ===== */
-function joinAsGuest(){
-  state.user={id:'guest_'+Math.random().toString(36).slice(2,7),name:'Guest',bio:'',isGuest:true};
+/* =====================================================
+   AUTH — GUEST & ENTER APP
+   ===================================================== */
+function joinAsGuest() {
+  state.user = { id: 'guest_' + Math.random().toString(36).slice(2, 7), name: 'Guest', bio: '', isGuest: true };
   enterApp();
 }
 
-async function enterApp(){
-  document.getElementById('auth-page').style.display='none';
+async function enterApp() {
+  document.getElementById('auth-page').style.display = 'none';
   document.getElementById('app').classList.add('visible');
   updateSidebarUser();
   navigate('feed');
-  // Load posts from Supabase when entering the app
   await loadPosts();
 }
 
-function updateSidebarUser(){
-  const u=state.user;if(!u)return;
-  const n=u.name||'Guest';
-  document.getElementById('sidebar-av').textContent=n.charAt(0).toUpperCase();
-  document.getElementById('sidebar-username').textContent=n;
-  document.getElementById('sidebar-tag').textContent=u.isGuest?'guest account':'@'+n.toLowerCase().replace(/\s+/g,'_');
+function updateSidebarUser() {
+  const u = state.user; if (!u) return;
+  const n = u.name || 'Guest';
+  document.getElementById('sidebar-av').textContent = n.charAt(0).toUpperCase();
+  document.getElementById('sidebar-username').textContent = n;
+  document.getElementById('sidebar-tag').textContent = u.isGuest ? 'guest account' : '@' + n.toLowerCase().replace(/\s+/g, '_');
 }
 
-/* ===== NAVIGATION ===== */
-function navigate(page){
-  state.currentPage=page;
+/* =====================================================
+   NAVIGATION
+   ===================================================== */
+function navigate(page) {
+  state.currentPage = page;
 
-  document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
-  const ni=document.getElementById('nav-'+page);if(ni)ni.classList.add('active');
-  document.querySelectorAll('.mob-nav-item').forEach(e=>e.classList.remove('active'));
-  const mi=document.getElementById('mob-nav-'+page);if(mi)mi.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+  const ni = document.getElementById('nav-' + page); if (ni) ni.classList.add('active');
+  document.querySelectorAll('.mob-nav-item').forEach(e => e.classList.remove('active'));
+  const mi = document.getElementById('mob-nav-' + page); if (mi) mi.classList.add('active');
 
-  const titles={feed:'Feed',chats:'Chats',polls:'Polls',projects:'Projects',profile:'Profile',settings:'Settings',ember:'Ember AI'};
-  document.getElementById('topbar-title').textContent=titles[page]||page;
+  const titles = {feed:'Feed',chats:'Chats',polls:'Polls',projects:'Projects',profile:'Profile',settings:'Settings',ember:'Ember AI'};
+  document.getElementById('topbar-title').textContent = titles[page] || page;
 
-  const hpBtn=document.getElementById('host-project-btn');
-  if(hpBtn) hpBtn.classList.toggle('visible', page==='projects');
+  const hpBtn = document.getElementById('host-project-btn');
+  if (hpBtn) hpBtn.classList.toggle('visible', page === 'projects');
 
-  const fab=document.getElementById('fab-btn');
-  const showFab=['feed','polls','chats'].includes(page);
-  if(showFab){
+  const fab = document.getElementById('fab-btn');
+  const showFab = ['feed','polls','chats'].includes(page);
+  if (showFab) {
     fab.classList.add('visible');
-    if(page==='chats'){
-      fab.innerHTML=`<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>`;
-      fab.title='Open Community Chat';
-    } else if(page==='feed'){
-      fab.innerHTML=`<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
-      fab.title='New Post';
+    if (page === 'chats') {
+      fab.innerHTML = `<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>`;
+      fab.title = 'Open Community Chat';
+    } else if (page === 'feed') {
+      fab.innerHTML = `<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
+      fab.title = 'New Post';
     } else {
-      fab.innerHTML=`<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
-      fab.title='New Poll';
+      fab.innerHTML = `<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
+      fab.title = 'New Poll';
     }
   } else {
     fab.classList.remove('visible');
   }
 
-  if(page !== 'ember'){
+  if (page !== 'ember') {
     const emberWrap = document.getElementById('ember-layout-wrap');
-    if(emberWrap) emberWrap.remove();
+    if (emberWrap) emberWrap.remove();
   }
 
-  const content=document.getElementById('content');
-  if(page !== 'ember'){
-    content.style.cssText='';
-  }
+  const content = document.getElementById('content');
+  if (page !== 'ember') content.style.cssText = '';
 
-  const cl=document.getElementById('chat-layout-wrap');
-  if(cl && page!=='chats') cl.remove();
+  const cl = document.getElementById('chat-layout-wrap');
+  if (cl && page !== 'chats') cl.remove();
 
-  switch(page){
-    case 'feed': renderFeed(); break;
-    case 'chats': renderChats(); break;
-    case 'polls': renderPolls(); break;
+  switch (page) {
+    case 'feed':     renderFeed();    break;
+    case 'chats':    renderChats();   break;
+    case 'polls':    renderPolls();   break;
     case 'projects': renderProjects(); break;
-    case 'profile': renderProfile(state.user?.id||'me'); break;
+    case 'profile':  renderProfile(state.user?.id || 'me'); break;
     case 'settings': renderSettings(); break;
-    case 'ember': renderEmber(); break;
+    case 'ember':    renderEmber();   break;
   }
 }
 
-/* ===== EMBER AI PAGE ===== */
+/* =====================================================
+   HELPERS
+   ===================================================== */
+function timeAgo(ts) {
+  const d = (Date.now() - ts) / 1000;
+  if (d < 60) return 'just now';
+  if (d < 3600) return Math.floor(d / 60) + 'm ago';
+  if (d < 86400) return Math.floor(d / 3600) + 'h ago';
+  return Math.floor(d / 86400) + 'd ago';
+}
+
+/*
+  userName() — resolves a user_id to their display name.
+
+  Priority order:
+  1. Current logged-in user  → state.user.name
+  2. Loaded Supabase post authors → state.postAuthors[uid]  (populated by loadPosts)
+  3. Sample / DM users       → state.users[uid].name
+  4. Fallback                → 'User'
+*/
+function userName(uid2) {
+  if (!uid2) return 'Unknown';
+  const me = state.user?.id;
+  if (uid2 === 'me' || uid2 === me) return state.user?.name || 'Guest';
+  if (state.postAuthors && state.postAuthors[uid2]) return state.postAuthors[uid2];
+  if (state.users[uid2]) return state.users[uid2].name;
+  return 'User';
+}
+
+function userInitial(uid2) { return userName(uid2).charAt(0).toUpperCase(); }
+
+const AV_COLORS = ['#D67933','#2772A3','#7B68EE','#5CBBAA','#D4789A','#E8924A','#4A9DCE'];
+function avColor(uid2) {
+  if (!uid2) return AV_COLORS[0];
+  let h = 0; for (let i = 0; i < uid2.length; i++) h += uid2.charCodeAt(i);
+  return AV_COLORS[h % AV_COLORS.length];
+}
+function avStyle(uid2) { return `background:${avColor(uid2)}`; }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+function allUserNames() {
+  const names = [];
+  Object.values(state.users).forEach(u => names.push(u.name));
+  if (state.user) names.push(state.user.name);
+  return names;
+}
+function escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* =====================================================
+   LOAD POSTS FROM SUPABASE
+   - Joins profiles table to get username (display name)
+   - Caches uid → display name in state.postAuthors
+     so userName() can resolve them everywhere
+   ===================================================== */
+async function loadPosts() {
+  // Fetch posts with joined profile username
+  const { data, error } = await supabaseClient
+    .from('posts')
+    .select(`
+      id,
+      user_id,
+      text,
+      title,
+      media_url,
+      media_type,
+      created_at,
+      profiles ( username )
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Load posts error:', error);
+    showToast('Could not load posts');
+    return;
+  }
+
+  // Build a uid → display name cache so the rest of the app can resolve names
+  if (!state.postAuthors) state.postAuthors = {};
+
+  state.posts = data.map(p => {
+    // profiles is an object (not an array) when using !inner or left join
+    const displayName = p.profiles?.username || 'User';
+    state.postAuthors[p.user_id] = displayName;
+
+    return {
+      id: p.id,
+      uid: p.user_id,
+      text: p.text || '',
+      title: p.title || '',
+      mediaUrl: p.media_url || '',
+      mediaType: p.media_type || 'image',
+      time: new Date(p.created_at).getTime(),
+      likes: [],
+      comments: []
+    };
+  });
+
+  renderFeed();
+}
+
+/* =====================================================
+   FEED
+   ===================================================== */
+function renderFeed() {
+  const c = document.getElementById('content');
+  if (!state.posts.length) {
+    c.innerHTML = `<div class="empty-state"><h3>Nothing here yet</h3><p>Be the first to post something ✨</p></div>`;
+    return;
+  }
+  c.innerHTML = state.posts.map(p => postHTML(p)).join('');
+}
+
+function postHTML(p) {
+  const me = state.user?.id || 'guest';
+  const liked = p.likes && p.likes.includes(me);
+  const isMine = p.uid === me;
+
+  // Display name from our cache (set by loadPosts) or fallback
+  const displayName = escHtml(userName(p.uid));
+
+  let mediaEl = '';
+  if (p.mediaUrl) {
+    if (p.mediaType === 'video') {
+      mediaEl = `<video class="post-media-video" src="${p.mediaUrl}" controls></video>`;
+    } else {
+      mediaEl = `<img class="post-media" src="${p.mediaUrl}" alt="post image" loading="lazy"/>`;
+    }
+  } else {
+    mediaEl = `<div style="width:100%;height:160px;background:linear-gradient(135deg,var(--bg2),var(--bg3));display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:.6;">🖼️</div>`;
+  }
+
+  return `<div class="post-card" id="post-${p.id}">
+    ${isMine ? `<button class="post-delete-btn" onclick="deletePost('${p.id}')" title="Delete post">✕</button>` : ''}
+    <div class="post-header">
+      <div class="post-av" style="${avStyle(p.uid)}" onclick="viewProfile('${p.uid}')">${userInitial(p.uid)}</div>
+      <div>
+        <div class="post-username" onclick="viewProfile('${p.uid}')">${displayName}</div>
+        <div class="post-time">${timeAgo(p.time)}</div>
+      </div>
+    </div>
+    ${mediaEl}
+    ${p.title ? `<div class="post-title">${escHtml(p.title)}</div>` : ''}
+    <div class="post-body">${escHtml(p.text)}</div>
+    <div class="post-footer">
+      <button class="post-action ${liked ? 'liked' : ''}" onclick="toggleLike('${p.id}')">
+        <svg width="15" height="15" fill="${liked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        ${p.likes ? p.likes.length : 0}
+      </button>
+      <button class="post-action">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Comment
+      </button>
+      ${isMine ? `<button class="post-action danger" onclick="deletePost('${p.id}')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        Delete
+      </button>` : ''}
+    </div>
+  </div>`;
+}
+
+function toggleLike(pid) {
+  const me = state.user?.id || 'guest';
+  const p = state.posts.find(x => x.id === pid); if (!p) return;
+  if (!p.likes) p.likes = [];
+  const idx = p.likes.indexOf(me);
+  if (idx === -1) p.likes.push(me); else p.likes.splice(idx, 1);
+  saveState(); renderFeed();
+}
+
+async function deletePost(pid) {
+  if (!confirm('Delete this post?')) return;
+  const me = state.user?.id || 'guest';
+  const post = state.posts.find(x => x.id === pid);
+  if (!post) return;
+  if (post.uid !== me) return showToast('Not your post.');
+
+  const { error } = await supabaseClient.from('posts').delete().eq('id', pid).eq('user_id', me);
+  if (error) return showToast('Delete failed: ' + error.message);
+
+  state.posts = state.posts.filter(x => x.id !== pid);
+  saveState(); renderFeed(); showToast('Post deleted.');
+}
+
+function viewProfile(uid2) { navigate('profile'); setTimeout(() => renderProfile(uid2), 10); }
+
+/* =====================================================
+   POST MODAL
+   ===================================================== */
+let _postMediaData = null, _postMediaType = null;
+
+function showPostModal() {
+  _postMediaData = null; _postMediaType = null;
+  makeModal('Share a Post');
+  document.getElementById('modal-body').innerHTML += `
+    <div class="form-group">
+      <label class="form-label">Media <span style="color:var(--danger);font-weight:700;">*required</span></label>
+      <div class="media-upload-box" id="upload-box">
+        <input type="file" accept="image/png,image/jpeg,image/jpg,video/mp4,video/webm,video/ogg" onchange="handlePostMedia(event)" id="media-file-input"/>
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="3"/>
+          <path d="M3 16l5-5 4 4 3-3 6 6"/>
+          <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/>
+        </svg>
+        <span>Upload Media</span>
+        <small>JPG, PNG or MP4 · click to browse</small>
+        <div id="upload-thumb-wrap"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Post Title</label>
+      <input class="form-input" id="post-title" placeholder="Give your post a title…"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Caption</label>
+      <textarea class="form-textarea" id="post-text" placeholder="Write something…" style="min-height:64px;"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitPost()">Post ✨</button>
+    </div>`;
+}
+
+function handlePostMedia(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const isVideo = file.type.startsWith('video/');
+  _postMediaType = isVideo ? 'video' : 'image';
+  const reader = new FileReader();
+  reader.onload = ev => {
+    _postMediaData = ev.target.result;
+    const box = document.getElementById('upload-box');
+    const wrap = document.getElementById('upload-thumb-wrap');
+    if (box) box.classList.add('has-media');
+    const icon = box.querySelector('svg');
+    const span = box.querySelector('span');
+    const small = box.querySelector('small');
+    if (icon) icon.style.display = 'none';
+    if (span) span.style.display = 'none';
+    if (small) small.style.display = 'none';
+    if (wrap) {
+      if (isVideo) {
+        wrap.innerHTML = `<video class="upload-thumb-video" src="${_postMediaData}" muted playsinline></video><div class="upload-thumb-overlay"><span>Change video</span></div>`;
+      } else {
+        wrap.innerHTML = `<img class="upload-thumb" src="${_postMediaData}" alt="preview"/><div class="upload-thumb-overlay"><span>Change photo</span></div>`;
+      }
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function submitPost() {
+  const txt   = document.getElementById('post-text')?.value?.trim();
+  const title = document.getElementById('post-title')?.value?.trim();
+  const fileInput = document.getElementById('media-file-input');
+  const file = fileInput?.files[0];
+  if (!file) return showToast('Upload media first');
+
+  try {
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !user) return showToast('Please sign in first');
+
+    // Ensure profile exists
+    const { data: profileExists } = await supabaseClient
+      .from('profiles').select('id').eq('id', user.id).maybeSingle();
+    if (!profileExists) {
+      const displayName = state.user?.name || user.email?.split('@')[0] || 'user';
+      const { error: pce } = await supabaseClient
+        .from('profiles')
+        .upsert({ id: user.id, username: displayName }, { onConflict: 'id' });
+      if (pce) return showToast('Profile setup failed: ' + pce.message);
+      if (!state.postAuthors) state.postAuthors = {};
+      state.postAuthors[user.id] = displayName;
+    }
+
+    const fileName = `${user.id}/${Date.now()}_${file.name}`;
+    const { error: uploadError } = await supabaseClient.storage.from('posts').upload(fileName, file);
+    if (uploadError) return showToast('Upload failed: ' + uploadError.message);
+
+    const { data: urlData } = supabaseClient.storage.from('posts').getPublicUrl(fileName);
+    if (!urlData?.publicUrl) return showToast('Failed to get media URL');
+
+    const mediaType = file.type.startsWith('video/') ? 'video' : 'image';
+
+    const { error: insertError } = await supabaseClient.from('posts').insert([{
+      user_id: user.id,
+      text: txt || '',
+      title: title || '',
+      media_url: urlData.publicUrl,
+      media_type: mediaType
+    }]);
+    if (insertError) return showToast('Failed to post: ' + insertError.message);
+
+    closeModal();
+    await loadPosts();
+    showToast('Posted! ✨');
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    showToast('Something went wrong');
+  }
+}
+
+/* =====================================================
+   CHATS
+   ===================================================== */
+function renderChats() {
+  const content = document.getElementById('content');
+  const main    = document.getElementById('main');
+
+  const old = document.getElementById('chat-layout-wrap'); if (old) old.remove();
+  content.style.display = 'none';
+
+  const wrap = document.createElement('div');
+  wrap.id = 'chat-layout-wrap';
+  wrap.className = 'chat-layout';
+  wrap.style.flex = '1';
+  wrap.style.overflow = 'hidden';
+  main.appendChild(wrap);
+
+  const dmSide = document.createElement('div');
+  dmSide.id = 'chat-sidebar';
+  let dmHTML = `<div style="padding:.75rem 1rem .4rem;font-size:.75rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;">Direct Messages</div>`;
+  dmHTML += Object.entries(state.users).map(([uid2, u]) => {
+    const msgs = state.dms[uid2] || [];
+    const last = msgs.filter(m => !m.deleted).slice(-1)[0];
+    return `<div class="dm-item" onclick="openDM('${uid2}')" id="dm-${uid2}">
+      <div class="dm-av" style="${avStyle(uid2)};width:38px;height:38px;">${u.name.charAt(0)}<div class="dm-online"></div></div>
+      <div style="flex:1;min-width:0">
+        <div class="dm-name">${u.name}</div>
+        <div class="dm-preview">${last ? escHtml(last.text) : 'Say hello!'}</div>
+      </div>
+      <div class="dm-time">${last ? timeAgo(last.time) : ''}</div>
+    </div>`;
+  }).join('');
+  dmSide.innerHTML = dmHTML;
+
+  const cWin = document.createElement('div');
+  cWin.className = 'chat-window';
+  cWin.id = 'chat-window';
+  cWin.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);gap:.75rem;">
+    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="opacity:.3"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span style="font-size:.9rem;">Select a conversation</span>
+    <span style="font-size:.8rem;opacity:.6;">or open Community Chat →</span>
+  </div>`;
+
+  wrap.appendChild(dmSide);
+  wrap.appendChild(cWin);
+}
+
+function openDM(uid2) {
+  state.currentDM = uid2;
+  if (!state.dms[uid2]) state.dms[uid2] = [];
+  const u = state.users[uid2];
+  const cWin = document.getElementById('chat-window'); if (!cWin) return;
+  document.querySelectorAll('.dm-item').forEach(e => e.classList.remove('active'));
+  const di = document.getElementById('dm-' + uid2); if (di) di.classList.add('active');
+  document.getElementById('topbar-title').textContent = u?.name || 'Chat';
+
+  cWin.innerHTML = `
+    <div class="chat-header">
+      <div class="dm-av" style="${avStyle(uid2)};width:34px;height:34px;">${u?.name?.charAt(0) || '?'}</div>
+      <div>
+        <div style="font-weight:700;font-size:.9rem;">${u?.name || 'User'}</div>
+        <div style="font-size:.75rem;color:var(--online);">● online</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="dm-msgs">${renderDMMessages(uid2)}</div>
+    <div class="chat-input-row">
+      <input class="chat-inp" id="dm-inp" placeholder="Message ${u?.name || ''}... type @ to tag" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendDM('${uid2}');}"/>
+      <button class="send-btn" onclick="sendDM('${uid2}')">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>`;
+  scrollToBottom('dm-msgs');
+}
+
+function renderDMMessages(uid2) {
+  return (state.dms[uid2] || []).map((m, i) => dmMsgHTML(m, uid2, i)).join('');
+}
+
+function dmMsgHTML(m, uid2, i) {
+  const me = state.user?.id || 'guest';
+  const isMine = (m.from === 'me' || m.from === me);
+  if (m.deleted) return `<div class="msg-row ${isMine ? 'mine' : ''}"><div class="msg-deleted">Message deleted</div></div>`;
+  const name = isMine ? (state.user?.name || 'You') : userName(uid2);
+  const avU = isMine ? me : uid2;
+  return `<div class="msg-row ${isMine ? 'mine' : ''}" id="dmm-${m.id}">
+    ${!isMine ? `<div class="msg-av" style="${avStyle(avU)}">${userInitial(avU)}</div>` : ''}
+    <div class="msg-bubble-wrap">
+      <div class="msg-bubble" onmouseenter="showMsgActions('dma-${m.id}')" onmouseleave="hideMsgActions('dma-${m.id}')">${escHtml(m.text)}</div>
+      <div class="msg-actions" id="dma-${m.id}" onmouseenter="showMsgActions('dma-${m.id}')" onmouseleave="hideMsgActions('dma-${m.id}')">
+        <button class="msg-action-btn" onclick="tagUserInDM('${uid2}','${escHtml(name)}')">@ Tag</button>
+        ${isMine ? `<button class="msg-action-btn del" onclick="deleteDMMsg('${uid2}','${m.id}')">Delete</button>` : ''}
+      </div>
+      <div class="msg-time">${timeAgo(m.time)}</div>
+    </div>
+  </div>`;
+}
+
+function showMsgActions(id) { const el = document.getElementById(id); if (el) el.style.display = 'flex'; }
+function hideMsgActions(id) { const el = document.getElementById(id); if (el) el.style.display = ''; }
+
+function tagUserInDM(uid2, name) {
+  const inp = document.getElementById('dm-inp');
+  if (inp) { inp.value = (inp.value + ' @' + name + ' ').trimStart(); inp.focus(); }
+}
+function deleteDMMsg(uid2, msgId) {
+  if (!confirm('Delete this message?')) return;
+  const m = (state.dms[uid2] || []).find(x => x.id === msgId);
+  if (m) {
+    m.deleted = true; saveState();
+    const el = document.getElementById('dmm-' + msgId);
+    if (el) el.outerHTML = `<div class="msg-row mine"><div class="msg-deleted">Message deleted</div></div>`;
+  }
+}
+function sendDM(uid2) {
+  const inp = document.getElementById('dm-inp');
+  const txt = inp?.value?.trim(); if (!txt) return;
+  if (!state.dms[uid2]) state.dms[uid2] = [];
+  const msgId = 'dm' + uid();
+  state.dms[uid2].push({ id: msgId, from: 'me', text: txt, time: Date.now(), deleted: false });
+  saveState(); inp.value = '';
+  const c = document.getElementById('dm-msgs');
+  if (c) { c.innerHTML = renderDMMessages(uid2); scrollToBottom('dm-msgs'); }
+  setTimeout(() => {
+    const replies = ['Sounds great!','Interesting! Tell me more.','Ha, totally! 😄','🔥','That makes sense!','Wow, really?'];
+    state.dms[uid2].push({ id: 'dm' + uid(), from: uid2, text: replies[Math.floor(Math.random() * replies.length)], time: Date.now(), deleted: false });
+    saveState();
+    const c2 = document.getElementById('dm-msgs');
+    if (c2) { c2.innerHTML = renderDMMessages(uid2); scrollToBottom('dm-msgs'); }
+  }, 1000 + Math.random() * 1500);
+}
+
+/* =====================================================
+   COMMUNITY CHAT
+   ===================================================== */
+function openCommunityChat() {
+  renderCommunityMessages();
+  document.getElementById('community-page').classList.add('visible');
+  scrollToBottom('community-msgs');
+  document.getElementById('community-inp').focus();
+}
+function closeCommunityChat() {
+  document.getElementById('community-page').classList.remove('visible');
+}
+function renderCommunityMessages() {
+  document.getElementById('community-msgs').innerHTML =
+    state.communityMessages.map((m, i) => communityMsgHTML(m, i)).join('');
+}
+function communityMsgHTML(m, i) {
+  const me = state.user?.id || 'guest';
+  const isMine = (m.uid === me);
+  if (m.deleted) return `<div class="msg-row ${isMine ? 'mine' : ''}"><div class="msg-deleted">Message deleted</div></div>`;
+  const name = isMine ? (state.user?.name || 'You') : userName(m.uid);
+  return `<div class="msg-row ${isMine ? 'mine' : ''}" id="cm-${m.id}">
+    ${!isMine ? `<div class="msg-av" style="${avStyle(m.uid)}">${userInitial(m.uid)}</div>` : ''}
+    <div class="msg-bubble-wrap">
+      ${!isMine ? `<div style="font-size:.72rem;color:var(--text3);margin-bottom:.1rem;padding-left:.1rem;">${name}</div>` : ''}
+      <div class="msg-bubble" onmouseenter="showMsgActions('cma-${m.id}')" onmouseleave="hideMsgActions('cma-${m.id}')">${escHtml(m.text)}</div>
+      <div class="msg-actions" id="cma-${m.id}" onmouseenter="showMsgActions('cma-${m.id}')" onmouseleave="hideMsgActions('cma-${m.id}')">
+        <button class="msg-action-btn" onclick="tagInCommunity('${escHtml(name)}')">@ Tag</button>
+        ${isMine ? `<button class="msg-action-btn del" onclick="deleteCommunityMsg('${m.id}')">Delete</button>` : ''}
+      </div>
+      <div class="msg-time" style="text-align:${isMine ? 'right' : 'left'}">${timeAgo(m.time)}</div>
+    </div>
+  </div>`;
+}
+function tagInCommunity(name) {
+  const inp = document.getElementById('community-inp');
+  if (inp) { inp.value = (inp.value + ' @' + name + ' ').trimStart(); inp.focus(); }
+}
+function deleteCommunityMsg(msgId) {
+  if (!confirm('Delete this message?')) return;
+  const m = state.communityMessages.find(x => x.id === msgId);
+  if (m) { m.deleted = true; saveState(); renderCommunityMessages(); scrollToBottom('community-msgs'); }
+}
+function sendCommunity() {
+  const inp = document.getElementById('community-inp');
+  const txt = inp?.value?.trim(); if (!txt) return;
+  const myUid = state.user?.id || 'guest';
+  state.communityMessages.push({ id: 'cm' + uid(), uid: myUid, text: txt, time: Date.now(), deleted: false, replyTo: null });
+  saveState(); inp.value = ''; inp.style.height = 'auto';
+  renderCommunityMessages(); scrollToBottom('community-msgs');
+}
+function commKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendCommunity(); }
+}
+function commInput(el) {
+  el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+  const val = el.value; const atIdx = val.lastIndexOf('@');
+  const hint = document.getElementById('tag-hint');
+  if (atIdx !== -1 && !val.slice(atIdx + 1).includes(' ') && val.slice(atIdx + 1).length > 0) {
+    const query = val.slice(atIdx + 1).toLowerCase();
+    const matches = allUserNames().filter(n => n.toLowerCase().startsWith(query));
+    if (matches.length) {
+      hint.style.display = 'block';
+      hint.innerHTML = matches.slice(0, 3).map(n => `<span onclick="insertTag('${n}')" style="cursor:pointer;margin-right:.5rem;">@${n}</span>`).join('');
+    } else { hint.style.display = 'none'; }
+  } else { hint.style.display = 'none'; }
+}
+function insertTag(name) {
+  const inp = document.getElementById('community-inp'); if (!inp) return;
+  const val = inp.value; const atIdx = val.lastIndexOf('@');
+  inp.value = val.slice(0, atIdx) + '@' + name + ' ';
+  document.getElementById('tag-hint').style.display = 'none';
+  inp.focus();
+}
+
+/* =====================================================
+   POLLS
+   ===================================================== */
+function renderPolls() {
+  const c = document.getElementById('content');
+  if (!state.polls.length) { c.innerHTML = `<div class="empty-state"><h3>No polls yet</h3><p>Create one using the + button!</p></div>`; return; }
+  c.innerHTML = state.polls.map(p => pollHTML(p)).join('');
+}
+function pollHTML(p) {
+  const me = state.user?.id || 'guest';
+  const myVote = p.votes[me];
+  const total = Object.values(p.votes).length;
+  const isMine = p.uid === me;
+  const opts = p.options.map(opt => {
+    const cnt = Object.values(p.votes).filter(v => v === opt).length;
+    const pct = total ? Math.round(cnt / total * 100) : 0;
+    return `<button class="poll-opt ${myVote === opt ? 'voted' : ''}" onclick="vote('${p.id}','${opt.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
+      <div class="poll-bar" style="width:${myVote ? pct : 0}%"></div>
+      <span style="position:relative">${escHtml(opt)}</span>
+      ${myVote ? `<span class="poll-pct">${pct}%</span>` : ''}
+    </button>`;
+  }).join('');
+  return `<div class="poll-card">
+    ${isMine ? `<button class="poll-delete-btn" onclick="deletePoll('${p.id}')" title="Delete poll">✕</button>` : ''}
+    <div class="poll-category">${escHtml(p.category)}</div>
+    <div class="poll-q">${escHtml(p.question)}</div>
+    <div class="poll-sub">${escHtml(p.sub)}</div>
+    ${opts}
+    <div class="poll-meta">
+      <strong style="color:var(--text)">${userName(p.uid)}</strong> · ${total} vote${total !== 1 ? 's' : ''} · ${timeAgo(p.time)}
+    </div>
+  </div>`;
+}
+function vote(pid, opt) {
+  const me = state.user?.id || 'guest';
+  const p = state.polls.find(x => x.id === pid); if (!p) return;
+  if (p.votes[me] === opt) delete p.votes[me]; else p.votes[me] = opt;
+  saveState(); renderPolls();
+}
+function deletePoll(pid) {
+  if (!confirm('Delete this poll?')) return;
+  const me = state.user?.id || 'guest';
+  const idx = state.polls.findIndex(x => x.id === pid); if (idx === -1) return;
+  if (state.polls[idx].uid !== me) return showToast('Not your poll.');
+  state.polls.splice(idx, 1); saveState(); renderPolls(); showToast('Poll deleted.');
+}
+
+/* ===== POLL MODAL ===== */
+function showPollModal() {
+  makeModal('Create a Poll');
+  document.getElementById('modal-body').innerHTML += `
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <select class="form-select" id="poll-cat">
+        <option>General</option><option>Sports</option><option>Tech</option><option>Creative</option><option>Lifestyle</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Question</label>
+      <input class="form-input" id="poll-q" placeholder="Your poll question..."/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Subtitle</label>
+      <input class="form-input" id="poll-sub" placeholder="A short description or context..."/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Options</label>
+      <div class="opt-list" id="opt-list">
+        <div class="opt-input-row"><input class="opt-inp" placeholder="Option 1"/><button class="rm-opt" onclick="rmOpt(this)">✕</button></div>
+        <div class="opt-input-row"><input class="opt-inp" placeholder="Option 2"/><button class="rm-opt" onclick="rmOpt(this)">✕</button></div>
+      </div>
+      <button class="add-opt" onclick="addOpt()">+ Add option</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitPoll()">Create Poll</button>
+    </div>`;
+}
+function addOpt() {
+  const l = document.getElementById('opt-list');
+  const n = document.createElement('div'); n.className = 'opt-input-row';
+  n.innerHTML = `<input class="opt-inp" placeholder="Option ${l.children.length + 1}"/><button class="rm-opt" onclick="rmOpt(this)">✕</button>`;
+  l.appendChild(n);
+}
+function rmOpt(btn) {
+  if (document.getElementById('opt-list').children.length > 2) btn.parentElement.remove();
+  else showToast('Need at least 2 options.');
+}
+function submitPoll() {
+  const q = document.getElementById('poll-q')?.value?.trim();
+  const sub = document.getElementById('poll-sub')?.value?.trim();
+  const cat = document.getElementById('poll-cat')?.value;
+  const opts = [...document.querySelectorAll('.opt-inp')].map(e => e.value.trim()).filter(Boolean);
+  if (!q) return showToast('Please add a question.');
+  if (opts.length < 2) return showToast('Need at least 2 options.');
+  state.polls.unshift({ id: 'pl' + Date.now(), uid: state.user?.id || 'guest', category: cat || 'General', question: q, sub: sub || '', options: opts, votes: {}, time: Date.now() });
+  saveState(); closeModal(); navigate('polls'); showToast('Poll created! 📊');
+}
+
+/* =====================================================
+   PROJECTS
+   ===================================================== */
+function renderProjects() {
+  const c = document.getElementById('content');
+  let html = `<div class="section-header"><div class="section-h">Active Projects</div></div>`;
+  if (!state.projects.length) html += `<div class="empty-state"><h3>No projects yet</h3><p>Use the Host Project button to create one!</p></div>`;
+  else html += state.projects.map(p => projectHTML(p)).join('');
+  c.innerHTML = html;
+}
+function projectHTML(p) {
+  const me = state.user?.id || 'guest';
+  const joined = p.members.includes(me) || p.uid === me;
+  const isMine = p.uid === me;
+  const full = p.max !== 'unlimited' && p.members.length >= parseInt(p.max);
+  return `<div class="project-card">
+    <div class="project-banner-placeholder">🗺️</div>
+    <div class="project-info">
+      <div class="project-name">${escHtml(p.name)}</div>
+      <div class="project-desc">${escHtml(p.desc)}</div>
+      <div class="project-meta">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        ${p.members.length}${p.max === 'unlimited' ? '' : '/' + p.max} members · by ${userName(p.uid)}
+        ${full && !joined ? '<span class="tag" style="margin-left:.25rem">Full</span>' : ''}
+      </div>
+      <div class="project-actions">
+        ${!joined && !full ? `<button class="join-btn" onclick="joinProject('${p.id}')">Join</button>` : ''}
+        ${joined ? `<button class="join-btn" onclick="openProjectChat('${p.id}')">Open Chat</button>` : ''}
+        ${isMine ? `<button class="join-btn" style="background:transparent;border:1px solid var(--danger);color:var(--danger);" onclick="deleteProject('${p.id}')">Delete</button>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+function joinProject(pid) {
+  const me = state.user?.id || 'guest';
+  const p = state.projects.find(x => x.id === pid); if (!p) return;
+  if (p.members.includes(me)) return;
+  if (p.max !== 'unlimited' && p.members.length >= parseInt(p.max)) return showToast('Project is full.');
+  p.members.push(me);
+  if (!state.projectChats[pid]) state.projectChats[pid] = [];
+  state.projectChats[pid].push({ id: 'pc' + uid(), uid: me, text: `${state.user?.name || 'Guest'} joined the project! 👋`, time: Date.now(), deleted: false });
+  saveState(); renderProjects(); showToast('Joined ' + p.name + '! 🎉');
+}
+function deleteProject(pid) {
+  if (!confirm('Delete this project?')) return;
+  const me = state.user?.id || 'guest';
+  const idx = state.projects.findIndex(x => x.id === pid); if (idx === -1) return;
+  if (state.projects[idx].uid !== me) return showToast('Not your project.');
+  state.projects.splice(idx, 1); saveState(); renderProjects(); showToast('Project deleted.');
+}
+function openProjectChat(pid) {
+  const p = state.projects.find(x => x.id === pid); if (!p) return;
+  navigate('chats');
+  setTimeout(() => {
+    const cWin = document.getElementById('chat-window'); if (!cWin) return;
+    document.getElementById('topbar-title').textContent = p.name;
+    if (!state.projectChats[pid]) state.projectChats[pid] = [];
+    cWin.innerHTML = `
+      <div class="chat-header">
+        <div class="dm-av" style="background:var(--blue);width:34px;height:34px;">P</div>
+        <div>
+          <div style="font-weight:700;font-size:.9rem;">${escHtml(p.name)}</div>
+          <div style="font-size:.75rem;color:var(--text3);">${p.members.length} member${p.members.length !== 1 ? 's' : ''}</div>
+        </div>
+      </div>
+      <div class="chat-messages" id="proj-msgs">${state.projectChats[pid].map((m, i) => projMsgHTML(m, pid, i)).join('')}</div>
+      <div class="chat-input-row">
+        <input class="chat-inp" id="proj-inp" placeholder="Message ${escHtml(p.name)}..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendProjectMsg('${pid}');}"/>
+        <button class="send-btn" onclick="sendProjectMsg('${pid}')">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>`;
+    scrollToBottom('proj-msgs');
+  }, 60);
+}
+function projMsgHTML(m, pid, i) {
+  const me = state.user?.id || 'guest';
+  const isMine = (m.uid === me);
+  if (m.deleted) return `<div class="msg-row ${isMine ? 'mine' : ''}"><div class="msg-deleted">Message deleted</div></div>`;
+  const name = isMine ? (state.user?.name || 'You') : userName(m.uid);
+  return `<div class="msg-row ${isMine ? 'mine' : ''}" id="pm-${m.id}">
+    ${!isMine ? `<div class="msg-av" style="${avStyle(m.uid)}">${userInitial(m.uid)}</div>` : ''}
+    <div class="msg-bubble-wrap">
+      ${!isMine ? `<div style="font-size:.72rem;color:var(--text3);margin-bottom:.1rem;">${name}</div>` : ''}
+      <div class="msg-bubble" onmouseenter="showMsgActions('pma-${m.id}')" onmouseleave="hideMsgActions('pma-${m.id}')">${escHtml(m.text)}</div>
+      <div class="msg-actions" id="pma-${m.id}" onmouseenter="showMsgActions('pma-${m.id}')" onmouseleave="hideMsgActions('pma-${m.id}')">
+        <button class="msg-action-btn" onclick="tagInProject('${pid}','${escHtml(name)}')">@ Tag</button>
+        ${isMine ? `<button class="msg-action-btn del" onclick="deleteProjectMsg('${pid}','${m.id}')">Delete</button>` : ''}
+      </div>
+      <div class="msg-time" style="text-align:${isMine ? 'right' : 'left'}">${timeAgo(m.time)}</div>
+    </div>
+  </div>`;
+}
+function tagInProject(pid, name) {
+  const inp = document.getElementById('proj-inp');
+  if (inp) { inp.value = (inp.value + ' @' + name + ' ').trimStart(); inp.focus(); }
+}
+function deleteProjectMsg(pid, msgId) {
+  if (!confirm('Delete this message?')) return;
+  const m = (state.projectChats[pid] || []).find(x => x.id === msgId);
+  if (m) {
+    m.deleted = true; saveState();
+    const el = document.getElementById('pm-' + msgId);
+    if (el) el.outerHTML = `<div class="msg-row mine"><div class="msg-deleted">Message deleted</div></div>`;
+  }
+}
+function sendProjectMsg(pid) {
+  const inp = document.getElementById('proj-inp');
+  const txt = inp?.value?.trim(); if (!txt) return;
+  const myUid = state.user?.id || 'guest';
+  if (!state.projectChats[pid]) state.projectChats[pid] = [];
+  const msgId = 'pc' + uid();
+  state.projectChats[pid].push({ id: msgId, uid: myUid, text: txt, time: Date.now(), deleted: false });
+  saveState(); inp.value = '';
+  const c = document.getElementById('proj-msgs');
+  if (c) { c.innerHTML = state.projectChats[pid].map((m, i) => projMsgHTML(m, pid, i)).join(''); scrollToBottom('proj-msgs'); }
+}
+
+/* ===== PROJECT MODAL ===== */
+function showProjectModal() {
+  const me = state.user?.id || 'guest';
+  const myProj = state.projects.find(p => p.uid === me);
+  if (myProj) return showToast('You already host a project. Delete it first to create a new one.');
+  makeModal('Host a Project');
+  document.getElementById('modal-body').innerHTML += `
+    <div class="form-group">
+      <label class="form-label">Project Name</label>
+      <input class="form-input" id="proj-name" placeholder="My awesome project..."/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <input class="form-input" id="proj-desc" placeholder="What is this project about?"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Max Members</label>
+      <select class="form-select" id="proj-max">
+        <option value="2">2</option><option value="3">3</option><option value="4">4</option>
+        <option value="5" selected>5</option><option value="6">6</option>
+        <option value="10">10</option><option value="20">20</option>
+        <option value="unlimited">Unlimited</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitProject()">Host Project</button>
+    </div>`;
+}
+function submitProject() {
+  const name = document.getElementById('proj-name')?.value?.trim();
+  const desc  = document.getElementById('proj-desc')?.value?.trim();
+  const max   = document.getElementById('proj-max')?.value;
+  if (!name) return showToast('Please add a project name.');
+  const me = state.user?.id || 'guest'; const pid = 'pr' + Date.now();
+  state.projects.unshift({ id: pid, uid: me, name, desc: desc || '', max, members: [me], time: Date.now() });
+  state.projectChats[pid] = [{ id: 'pc' + uid(), uid: me, text: 'Project created! Welcome everyone 🎉', time: Date.now(), deleted: false }];
+  saveState(); closeModal(); renderProjects(); showToast('Project hosted! 🚀');
+}
+
+/* =====================================================
+   PROFILE
+   - Edit Profile updates BOTH profiles.username (Supabase)
+     AND state.postAuthors so posts reflect the new name
+     immediately without a page reload
+   ===================================================== */
+function renderProfile(uid2) {
+  const me = state.user?.id || 'guest';
+  const isMe = (uid2 === 'me' || uid2 === me);
+  const u = isMe ? state.user : state.users[uid2];
+  if (!u) { document.getElementById('content').innerHTML = `<div class="empty-state"><h3>User not found</h3></div>`; return; }
+  const myPosts = isMe
+    ? state.posts.filter(p => p.uid === me)
+    : state.posts.filter(p => p.uid === uid2);
+  document.getElementById('content').innerHTML = `
+    <div class="profile-header">
+      <div class="profile-av-lg" style="${avStyle(uid2)}">${(u.name || 'G').charAt(0).toUpperCase()}</div>
+      <div class="profile-name">${escHtml(u.name || 'Guest')}</div>
+      <div class="profile-bio">${escHtml(u.bio || 'No bio yet.')}</div>
+      <div class="profile-stats">
+        <div class="pstat"><div class="pstat-num">${myPosts.length}</div><div class="pstat-label">Posts</div></div>
+        <div class="pstat"><div class="pstat-num">${u.isGuest ? '—' : Object.keys(state.users).length}</div><div class="pstat-label">Following</div></div>
+        <div class="pstat"><div class="pstat-num">${myPosts.reduce((a, p) => a + (p.likes ? p.likes.length : 0), 0)}</div><div class="pstat-label">Likes</div></div>
+      </div>
+      ${isMe && !u.isGuest ? `<button class="edit-btn" onclick="showEditProfile()">Edit Profile</button>` : ''}
+      ${isMe && u.isGuest ? `<div style="margin-top:.75rem;font-size:.8rem;color:var(--text3);">Guest accounts cannot edit their profile.</div>` : ''}
+      ${!isMe ? `<button class="edit-btn" onclick="navigate('chats');setTimeout(()=>openDM('${uid2}'),80)">Message</button>` : ''}
+    </div>
+    <div class="section-header" style="margin-top:1.25rem"><div class="section-h">Posts</div></div>
+    ${myPosts.length ? myPosts.map(p => postHTML(p)).join('') : '<div class="empty-state"><p>No posts yet.</p></div>'}`;
+}
+
+function showEditProfile() {
+  makeModal('Edit Profile');
+  document.getElementById('modal-body').innerHTML += `
+    <div class="form-group">
+      <label class="form-label">Display Name</label>
+      <input class="form-input" id="ep-name" value="${escHtml(state.user?.name || '')}"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Bio</label>
+      <textarea class="form-textarea" id="ep-bio">${escHtml(state.user?.bio || '')}</textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" id="btn-save-profile" onclick="saveProfile()">Save</button>
+    </div>`;
+}
+
+/*
+  saveProfile()
+  1. Updates profiles.username in Supabase
+  2. Updates auth metadata display_name
+  3. Updates state.user.name + state.postAuthors cache
+  4. Re-renders sidebar and profile page so the name is live instantly
+*/
+async function saveProfile() {
+  const newName = document.getElementById('ep-name')?.value?.trim();
+  const newBio  = document.getElementById('ep-bio')?.value?.trim() || '';
+
+  if (!newName) return showToast('Display name cannot be empty.');
+
+  const btn = document.getElementById('btn-save-profile');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+
+  if (!state.user.isGuest) {
+    // 1. Update profiles.username in Supabase
+    //    NOTE: Your RLS policy must allow UPDATE where id = auth.uid()
+    const { error: dbErr } = await supabaseClient
+      .from('profiles')
+      .update({ username: newName })
+      .eq('id', state.user.id);
+
+    if (dbErr) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save'; }
+      return showToast('Could not save: ' + dbErr.message);
+    }
+
+    // 2. Update auth metadata so it stays in sync
+    await supabaseClient.auth.updateUser({ data: { display_name: newName } });
+  }
+
+  // 3. Update local state
+  state.user.name = newName;
+  state.user.bio  = newBio;
+
+  // Update postAuthors cache so all rendered posts reflect the new name immediately
+  if (!state.postAuthors) state.postAuthors = {};
+  state.postAuthors[state.user.id] = newName;
+
+  saveState();
+  updateSidebarUser();
+  closeModal();
+  renderProfile('me');
+  renderFeed(); // refresh feed so post headers update
+  showToast('Profile updated! ✨');
+}
+
+/* =====================================================
+   SETTINGS
+   ===================================================== */
+function renderSettings() {
+  document.getElementById('content').innerHTML = `
+    <div class="settings-section">
+      <div class="settings-title">Appearance</div>
+      <div class="setting-row">
+        <div><div class="setting-label">Theme</div><div class="setting-sub">Choose your colour palette</div></div>
+        <div class="theme-btns">
+          <button class="theme-btn ${state.theme === 'light-amber' ? 'active' : ''}" onclick="setTheme('light-amber',this)">☀️ Amber</button>
+          <button class="theme-btn ${state.theme === 'dark-amber' ? 'active' : ''}" onclick="setTheme('dark-amber',this)">🌙 Amber</button>
+          <button class="theme-btn ${state.theme === 'light-lapis' ? 'active' : ''}" onclick="setTheme('light-lapis',this)">☀️ Lapis</button>
+          <button class="theme-btn ${state.theme === 'dark-lapis' ? 'active' : ''}" onclick="setTheme('dark-lapis',this)">🌙 Lapis</button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-title">Account</div>
+      <div class="setting-row">
+        <div><div class="setting-label">Status</div><div class="setting-sub">${state.user?.isGuest ? 'Guest Account' : 'Registered Account'}</div></div>
+        ${state.user?.isGuest ? `<button class="theme-btn" onclick="showToast('Sign up coming soon!')">Sign up</button>` : ''}
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">Sign out</div></div>
+        <button class="theme-btn" onclick="signOut()">Sign out</button>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-title">About Ember</div>
+      <div class="setting-row"><div class="setting-label">Version</div><div style="color:var(--text3);font-size:.85rem;">1.0.0</div></div>
+      <div class="setting-row"><div class="setting-label">Made with</div><div style="color:var(--accent);font-size:.85rem;">🔥 passion</div></div>
+    </div>`;
+}
+
+async function signOut() {
+  await supabaseClient.auth.signOut();
+  state.user = null;
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('auth-page').style.display = 'flex';
+  saveState();
+}
+
+/* =====================================================
+   EMBER AI PAGE
+   ===================================================== */
 function renderEmber() {
   const content = document.getElementById('content');
-  const main = document.getElementById('main');
-
-  const old = document.getElementById('ember-layout-wrap');
-  if (old) old.remove();
-
+  const main    = document.getElementById('main');
+  const old = document.getElementById('ember-layout-wrap'); if (old) old.remove();
   content.style.display = 'none';
 
   const wrap = document.createElement('div');
@@ -957,12 +1836,9 @@ function renderEmber() {
       <div class="ei-sub">Your intelligent companion</div>
       <div class="ei-bar"><div class="ei-bar-fill"></div></div>
     </div>` : ''}
-
     <div id="ember-header">
       <div class="eh-brand">
-        <div class="eh-flame">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg>
-        </div>
+        <div class="eh-flame"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
         <div class="eh-title">EmberGPT</div>
       </div>
       <div style="display:flex;align-items:center;gap:.65rem;">
@@ -970,12 +1846,9 @@ function renderEmber() {
         <div class="eh-badge">AI · v1</div>
       </div>
     </div>
-
     <div id="ember-msgs">
       <div class="em-welcome" id="ember-welcome">
-        <div class="em-welcome-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg>
-        </div>
+        <div class="em-welcome-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
         <h2>Ask me anything</h2>
         <p>I'm Ember — your AI built right into this app. Fast, sharp, and always on.</p>
         <div class="em-suggestions">
@@ -986,26 +1859,18 @@ function renderEmber() {
         </div>
       </div>
     </div>
-
     <div id="ember-input-area">
       <div id="ember-input-wrap">
-        <textarea
-          id="ember-ai-inp"
-          placeholder="Ask Ember anything…"
-          rows="1"
+        <textarea id="ember-ai-inp" placeholder="Ask Ember anything…" rows="1"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendEmber();}"
-          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,110)+'px';"
-        ></textarea>
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,110)+'px';">
+        </textarea>
         <button id="ember-send-btn" onclick="sendEmber()">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-            <line x1="22" y1="2" x2="11" y2="13"/>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-          </svg>
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
       <div class="em-hint">Powered by <span>Ember AI</span> · Press Enter to send</div>
-    </div>
-  `;
+    </div>`;
 
   main.appendChild(wrap);
 
@@ -1045,12 +1910,10 @@ function emberSuggest(btn) {
 const _emberHistory = [];
 
 async function sendEmber() {
-  const inp = document.getElementById('ember-ai-inp');
+  const inp  = document.getElementById('ember-ai-inp');
   const msgs = document.getElementById('ember-msgs');
   if (!inp || !msgs) return;
-
-  const text = inp.value.trim();
-  if (!text) return;
+  const text = inp.value.trim(); if (!text) return;
 
   inp.disabled = true;
   document.getElementById('ember-send-btn').disabled = true;
@@ -1068,16 +1931,13 @@ async function sendEmber() {
       <div class="em-bubble">${escHtml(text)}</div>
     </div>`;
   msgs.appendChild(userEl);
-
-  inp.value = '';
-  inp.style.height = 'auto';
+  inp.value = ''; inp.style.height = 'auto';
   scrollToBottom('ember-msgs');
 
   _emberHistory.push({ role: 'user', content: text });
 
   const typingEl = document.createElement('div');
-  typingEl.className = 'em-row';
-  typingEl.id = 'ember-typing';
+  typingEl.className = 'em-row'; typingEl.id = 'ember-typing';
   typingEl.innerHTML = `
     <div class="em-av em-av-ai"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg></div>
     <div class="em-body">
@@ -1093,17 +1953,12 @@ async function sendEmber() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text })
     });
-
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
     const data = await res.json();
     const reply = data.reply || 'Something went wrong.';
-
     _emberHistory.push({ role: 'assistant', content: reply });
 
-    const t = document.getElementById('ember-typing');
-    if (t) t.remove();
-
+    document.getElementById('ember-typing')?.remove();
     const aiEl = document.createElement('div');
     aiEl.className = 'em-row';
     aiEl.innerHTML = `
@@ -1113,11 +1968,8 @@ async function sendEmber() {
         <div class="em-bubble">${emberFormat(reply)}</div>
       </div>`;
     msgs.appendChild(aiEl);
-
   } catch (err) {
-    const t = document.getElementById('ember-typing');
-    if (t) t.remove();
-
+    document.getElementById('ember-typing')?.remove();
     const errEl = document.createElement('div');
     errEl.className = 'em-row';
     errEl.innerHTML = `
@@ -1132,7 +1984,6 @@ async function sendEmber() {
     document.getElementById('ember-send-btn').disabled = false;
     inp.focus();
   }
-
   scrollToBottom('ember-msgs');
 }
 
@@ -1146,898 +1997,61 @@ function emberFormat(t) {
   return t;
 }
 
-function fabAction(){
-  const p=state.currentPage;
-  if(p==='feed') showPostModal();
-  else if(p==='polls') showPollModal();
-  else if(p==='chats') openCommunityChat();
+function fabAction() {
+  const p = state.currentPage;
+  if (p === 'feed') showPostModal();
+  else if (p === 'polls') showPollModal();
+  else if (p === 'chats') openCommunityChat();
 }
 
-/* ===== HELPERS ===== */
-function timeAgo(ts){
-  const d=(Date.now()-ts)/1000;
-  if(d<60)return 'just now';
-  if(d<3600)return Math.floor(d/60)+'m ago';
-  if(d<86400)return Math.floor(d/3600)+'h ago';
-  return Math.floor(d/86400)+'d ago';
-}
-function userName(uid2){
-  if(!uid2)return 'Unknown';
-  if(uid2==='me'||uid2===state.user?.id)return state.user?.name||'Guest';
-  return state.users[uid2]?.name||'User';
-}
-function userInitial(uid2){return userName(uid2).charAt(0).toUpperCase();}
-const AV_COLORS=['#D67933','#2772A3','#7B68EE','#5CBBAA','#D4789A','#E8924A','#4A9DCE'];
-function avColor(uid2){if(!uid2)return AV_COLORS[0];let h=0;for(let i=0;i<uid2.length;i++)h+=uid2.charCodeAt(i);return AV_COLORS[h%AV_COLORS.length];}
-function avStyle(uid2){return `background:${avColor(uid2)}`;}
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2800);
-}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
-function allUserNames(){
-  const names=[];
-  Object.values(state.users).forEach(u=>names.push(u.name));
-  if(state.user)names.push(state.user.name);
-  return names;
-}
-
-/* ===== FEED ===== */
-function renderFeed(){
-  const c=document.getElementById('content');
-  if(!state.posts.length){
-    c.innerHTML=`<div class="empty-state"><h3>Nothing here yet</h3><p>Be the first to post something ✨</p></div>`;return;
-  }
-  c.innerHTML=state.posts.map(p=>postHTML(p)).join('');
-}
-function postHTML(p){
-  const me=state.user?.id||'guest';
-  const liked=p.likes&&p.likes.includes(me);
-  const isMine=p.uid===me;
-  let mediaEl='';
-  if(p.mediaUrl){
-    if(p.mediaType==='video'){
-      mediaEl=`<video class="post-media-video" src="${p.mediaUrl}" controls></video>`;
-    } else {
-      mediaEl=`<img class="post-media" src="${p.mediaUrl}" alt="post image" loading="lazy"/>`;
-    }
-  } else {
-    mediaEl=`<div style="width:100%;height:160px;background:linear-gradient(135deg,var(--bg2),var(--bg3));display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:.6;">🖼️</div>`;
-  }
-  return `<div class="post-card" id="post-${p.id}">
-    ${isMine?`<button class="post-delete-btn" onclick="deletePost('${p.id}')" title="Delete post">✕</button>`:''}
-    <div class="post-header">
-      <div class="post-av" style="${avStyle(p.uid)}" onclick="viewProfile('${p.uid}')">${userInitial(p.uid)}</div>
-      <div>
-        <div class="post-username" onclick="viewProfile('${p.uid}')">${userName(p.uid)}</div>
-        <div class="post-time">${timeAgo(p.time)}</div>
-      </div>
-    </div>
-    ${mediaEl}
-    ${p.title?`<div class="post-title">${escHtml(p.title)}</div>`:''}
-    <div class="post-body">${escHtml(p.text)}</div>
-    <div class="post-footer">
-      <button class="post-action ${liked?'liked':''}" onclick="toggleLike('${p.id}')">
-        <svg width="15" height="15" fill="${liked?'currentColor':'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        ${p.likes?p.likes.length:0}
-      </button>
-      <button class="post-action">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Comment
-      </button>
-      ${isMine?`<button class="post-action danger" onclick="deletePost('${p.id}')">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-        Delete
-      </button>`:''}
-    </div>
-  </div>`;
-}
-function escHtml(s){if(!s)return '';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function toggleLike(pid){
-  const me=state.user?.id||'guest';
-  const p=state.posts.find(x=>x.id===pid);if(!p)return;
-  if(!p.likes)p.likes=[];
-  const idx=p.likes.indexOf(me);
-  if(idx===-1)p.likes.push(me);else p.likes.splice(idx,1);
-  saveState();renderFeed();
-}
-function deletePost(pid){
-  if(!confirm('Delete this post?'))return;
-  const me=state.user?.id||'guest';
-  const idx=state.posts.findIndex(x=>x.id===pid);
-  if(idx===-1)return;
-  if(state.posts[idx].uid!==me)return showToast('Not your post.');
-  state.posts.splice(idx,1);
-  saveState();renderFeed();showToast('Post deleted.');
-}
-function viewProfile(uid2){navigate('profile');setTimeout(()=>renderProfile(uid2),10);}
-
-/* ===== POST MODAL ===== */
-let _postMediaData=null,_postMediaType=null;
-
-function showPostModal(){
-  _postMediaData=null;_postMediaType=null;
-  makeModal('Share a Post');
-  document.getElementById('modal-body').innerHTML+=`
-    <div class="form-group">
-      <label class="form-label">Media <span style="color:var(--danger);font-weight:700;">*required</span></label>
-      <div class="media-upload-box" id="upload-box">
-        <input type="file" accept="image/png,image/jpeg,image/jpg,video/mp4,video/webm,video/ogg" onchange="handlePostMedia(event)" id="media-file-input"/>
-        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-          <rect x="3" y="3" width="18" height="18" rx="3"/>
-          <path d="M3 16l5-5 4 4 3-3 6 6"/>
-          <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/>
-        </svg>
-        <span>Upload Media</span>
-        <small>JPG, PNG or MP4 · click to browse</small>
-        <div id="upload-thumb-wrap"></div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Post Title</label>
-      <input class="form-input" id="post-title" placeholder="Give your post a title…"/>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Caption</label>
-      <textarea class="form-textarea" id="post-text" placeholder="Write something…" style="min-height:64px;"></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary" onclick="submitPost()">Post ✨</button>
-    </div>`;
-}
-
-function handlePostMedia(e){
-  const file=e.target.files[0];if(!file)return;
-  const isVideo=file.type.startsWith('video/');
-  _postMediaType=isVideo?'video':'image';
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    _postMediaData=ev.target.result;
-    const box=document.getElementById('upload-box');
-    const wrap=document.getElementById('upload-thumb-wrap');
-    if(box) box.classList.add('has-media');
-    const icon=box.querySelector('svg');
-    const span=box.querySelector('span');
-    const small=box.querySelector('small');
-    if(icon) icon.style.display='none';
-    if(span) span.style.display='none';
-    if(small) small.style.display='none';
-    if(wrap){
-      if(isVideo){
-        wrap.innerHTML=`<video class="upload-thumb-video" src="${_postMediaData}" muted playsinline></video><div class="upload-thumb-overlay"><span>Change video</span></div>`;
-      } else {
-        wrap.innerHTML=`<img class="upload-thumb" src="${_postMediaData}" alt="preview"/><div class="upload-thumb-overlay"><span>Change photo</span></div>`;
-      }
-    }
-  };
-  reader.readAsDataURL(file);
-}
-
-async function submitPost(){
-  const txt = document.getElementById('post-text')?.value?.trim();
-  const title = document.getElementById('post-title')?.value?.trim();
-
-  const fileInput = document.getElementById('media-file-input');
-  const file = fileInput?.files[0];
-
-  if(!file) return showToast('Upload media first');
-
-  try {
-    // 🔹 get current user
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    
-    if (userError || !user) {
-      console.error('Auth error:', userError);
-      return showToast('Please sign in first');
-    }
-
-    // 🔹 IMPORTANT: Ensure profile exists before posting
-    const { data: profileExists } = await supabaseClient
-      .from('profiles')
-      .select('id')
-      .eq('id', user.id)
-      .single();
-
-    if (!profileExists) {
-      console.log('Profile not found, creating it...');
-      const { error: profileCreateError } = await supabaseClient
-        .from('profiles')
-        .insert([{ id: user.id, username: user.email?.split('@')[0] || 'user' }]);
-      
-      if (profileCreateError) {
-        console.error('Profile creation error:', profileCreateError);
-        return showToast('Profile setup failed: ' + profileCreateError.message);
-      }
-    }
-
-    // 🔹 unique file name
-    const fileName = `${user.id}/${Date.now()}_${file.name}`;
-
-    // 🔹 upload to storage
-    const { data: uploadData, error: uploadError } = await supabaseClient
-      .storage
-      .from('posts')
-      .upload(fileName, file);
-
-    if (uploadError) {
-      console.error('Upload error:', uploadError);
-      return showToast('Upload failed: ' + uploadError.message);
-    }
-
-    // 🔹 get public URL (synchronous method)
-    const { data: urlData } = supabaseClient
-      .storage
-      .from('posts')
-      .getPublicUrl(fileName);
-
-    const publicURL = urlData?.publicUrl;
-
-    if (!publicURL) {
-      return showToast('Failed to get media URL');
-    }
-
-    // 🔹 detect type
-    const mediaType = file.type.startsWith('video/') ? 'video' : 'image';
-
-    // 🔹 save to DB
-    const { data: insertData, error: insertError } = await supabaseClient
-      .from('posts')
-      .insert([{
-        user_id: user.id,
-        text: txt || '',
-        title: title || '',
-        media_url: publicURL,
-        media_type: mediaType
-      }])
-      .select();
-
-    if (insertError) {
-      console.error('Insert error:', insertError);
-      return showToast('Failed to post: ' + insertError.message);
-    }
-
-    closeModal();
-    await loadPosts();
-    showToast('Posted! ✨');
-  } catch (err) {
-    console.error('Unexpected error:', err);
-    showToast('Something went wrong');
-  }
-}
-
-/* ===== CHATS ===== */
-function renderChats(){
-  const content=document.getElementById('content');
-  const main=document.getElementById('main');
-
-  const old=document.getElementById('chat-layout-wrap');if(old)old.remove();
-  content.style.display='none';
-
-  const wrap=document.createElement('div');
-  wrap.id='chat-layout-wrap';
-  wrap.className='chat-layout';
-  wrap.style.flex='1';
-  wrap.style.overflow='hidden';
-  main.appendChild(wrap);
-
-  const dmSide=document.createElement('div');
-  dmSide.id='chat-sidebar';
-  let dmHTML=`<div style="padding:.75rem 1rem .4rem;font-size:.75rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;">Direct Messages</div>`;
-  dmHTML+=Object.entries(state.users).map(([uid2,u])=>{
-    const msgs=state.dms[uid2]||[];
-    const last=msgs.filter(m=>!m.deleted)[msgs.filter(m=>!m.deleted).length-1];
-    return `<div class="dm-item" onclick="openDM('${uid2}')" id="dm-${uid2}">
-      <div class="dm-av" style="${avStyle(uid2)};width:38px;height:38px;">${u.name.charAt(0)}<div class="dm-online"></div></div>
-      <div style="flex:1;min-width:0">
-        <div class="dm-name">${u.name}</div>
-        <div class="dm-preview">${last?escHtml(last.text):'Say hello!'}</div>
-      </div>
-      <div class="dm-time">${last?timeAgo(last.time):''}</div>
-    </div>`;
-  }).join('');
-  dmSide.innerHTML=dmHTML;
-
-  const cWin=document.createElement('div');
-  cWin.className='chat-window';
-  cWin.id='chat-window';
-  cWin.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);gap:.75rem;">
-    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="opacity:.3"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    <span style="font-size:.9rem;">Select a conversation</span>
-    <span style="font-size:.8rem;opacity:.6;">or open Community Chat →</span>
-  </div>`;
-
-  wrap.appendChild(dmSide);
-  wrap.appendChild(cWin);
-}
-
-async function loadPosts(){
-  const { data, error } = await supabaseClient
-    .from('posts')
-    .select(`
-        *,
-        profiles!inner(username)
-      `)
-    .order('created_at', { ascending: false });
-
-  if(error){
-    console.error('Load posts error:', error);
-    const { data: fallbackData, error: fallbackError } = await supabaseClient
-      .from('posts')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if(fallbackError) return showToast('Failed to load posts');
-    data = fallbackData;
-  }
-
-  state.posts = data.map(p => ({
-    id: p.id,
-    uid: p.user_id,
-    text: p.text,
-    title: p.title,
-    mediaUrl: p.media_url,
-    mediaType: p.media_type,
-    time: new Date(p.created_at).getTime(),
-    likes: [], // you’ll fix later
-    comments: []
-  }));
-
-  renderFeed();
-}
-
-function openDM(uid2){
-  state.currentDM=uid2;
-  if(!state.dms[uid2])state.dms[uid2]=[];
-  const u=state.users[uid2];
-  const cWin=document.getElementById('chat-window');if(!cWin)return;
-  document.querySelectorAll('.dm-item').forEach(e=>e.classList.remove('active'));
-  const di=document.getElementById('dm-'+uid2);if(di)di.classList.add('active');
-  document.getElementById('topbar-title').textContent=u?.name||'Chat';
-
-  cWin.innerHTML=`
-    <div class="chat-header">
-      <div class="dm-av" style="${avStyle(uid2)};width:34px;height:34px;">${u?.name?.charAt(0)||'?'}</div>
-      <div>
-        <div style="font-weight:700;font-size:.9rem;">${u?.name||'User'}</div>
-        <div style="font-size:.75rem;color:var(--online);">● online</div>
-      </div>
-    </div>
-    <div class="chat-messages" id="dm-msgs">${renderDMMessages(uid2)}</div>
-    <div class="chat-input-row">
-      <input class="chat-inp" id="dm-inp" placeholder="Message ${u?.name||''}... type @ to tag" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendDM('${uid2}');}"/>
-      <button class="send-btn" onclick="sendDM('${uid2}')">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
-    </div>`;
-  scrollToBottom('dm-msgs');
-}
-
-function renderDMMessages(uid2){
-  const msgs=state.dms[uid2]||[];
-  return msgs.map((m,i)=>dmMsgHTML(m,uid2,i)).join('');
-}
-function dmMsgHTML(m,uid2,i){
-  const me=state.user?.id||'guest';
-  const isMine=(m.from==='me'||m.from===me);
-  if(m.deleted){
-    return `<div class="msg-row ${isMine?'mine':''}">
-      <div class="msg-deleted">Message deleted</div>
-    </div>`;
-  }
-  const name=isMine?(state.user?.name||'You'):userName(uid2);
-  const avU=isMine?me:uid2;
-  return `<div class="msg-row ${isMine?'mine':''}" id="dmm-${m.id}">
-    ${!isMine?`<div class="msg-av" style="${avStyle(avU)}">${userInitial(avU)}</div>`:''}
-    <div class="msg-bubble-wrap">
-      <div class="msg-bubble" onmouseenter="showMsgActions('dma-${m.id}')" onmouseleave="hideMsgActions('dma-${m.id}')">${escHtml(m.text)}</div>
-      <div class="msg-actions" id="dma-${m.id}" onmouseenter="showMsgActions('dma-${m.id}')" onmouseleave="hideMsgActions('dma-${m.id}')">
-        <button class="msg-action-btn" onclick="tagUserInDM('${uid2}','${escHtml(name)}')">@ Tag</button>
-        ${isMine?`<button class="msg-action-btn del" onclick="deleteDMMsg('${uid2}','${m.id}')">Delete</button>`:''}
-      </div>
-      <div class="msg-time">${timeAgo(m.time)}</div>
-    </div>
-  </div>`;
-}
-function showMsgActions(id){const el=document.getElementById(id);if(el)el.style.display='flex';}
-function hideMsgActions(id){const el=document.getElementById(id);if(el)el.style.display='';}
-
-function tagUserInDM(uid2,name){
-  const inp=document.getElementById('dm-inp');
-  if(inp){inp.value=(inp.value+' @'+name+' ').trimStart();inp.focus();}
-}
-function deleteDMMsg(uid2,msgId){
-  if(!confirm('Delete this message?'))return;
-  const msgs=state.dms[uid2]||[];
-  const m=msgs.find(x=>x.id===msgId);
-  if(m){m.deleted=true;saveState();
-    const el=document.getElementById('dmm-'+msgId);
-    if(el)el.outerHTML=`<div class="msg-row mine"><div class="msg-deleted">Message deleted</div></div>`;
-  }
-}
-
-function sendDM(uid2){
-  const inp=document.getElementById('dm-inp');
-  const txt=inp?.value?.trim();if(!txt)return;
-  if(!state.dms[uid2])state.dms[uid2]=[];
-  const msgId='dm'+uid();
-  state.dms[uid2].push({id:msgId,from:'me',text:txt,time:Date.now(),deleted:false});
-  saveState();inp.value='';
-  const c=document.getElementById('dm-msgs');
-  if(c){c.innerHTML=renderDMMessages(uid2);scrollToBottom('dm-msgs');}
-  setTimeout(()=>{
-    const replies=['Sounds great!','Interesting! Tell me more.','Ha, totally! 😄','🔥','That makes sense!','Wow, really?'];
-    state.dms[uid2].push({id:'dm'+uid(),from:uid2,text:replies[Math.floor(Math.random()*replies.length)],time:Date.now(),deleted:false});
-    saveState();
-    const c2=document.getElementById('dm-msgs');
-    if(c2){c2.innerHTML=renderDMMessages(uid2);scrollToBottom('dm-msgs');}
-  },1000+Math.random()*1500);
-}
-
-/* ===== COMMUNITY CHAT ===== */
-function openCommunityChat(){
-  renderCommunityMessages();
-  const cp=document.getElementById('community-page');
-  cp.classList.add('visible');
-  scrollToBottom('community-msgs');
-  document.getElementById('community-inp').focus();
-}
-function closeCommunityChat(){
-  document.getElementById('community-page').classList.remove('visible');
-}
-function renderCommunityMessages(){
-  const container=document.getElementById('community-msgs');
-  container.innerHTML=state.communityMessages.map((m,i)=>communityMsgHTML(m,i)).join('');
-}
-function communityMsgHTML(m,i){
-  const me=state.user?.id||'guest';
-  const isMine=(m.uid===me);
-  if(m.deleted){
-    return `<div class="msg-row ${isMine?'mine':''}"><div class="msg-deleted">Message deleted</div></div>`;
-  }
-  const name=isMine?(state.user?.name||'You'):userName(m.uid);
-  return `<div class="msg-row ${isMine?'mine':''}" id="cm-${m.id}">
-    ${!isMine?`<div class="msg-av" style="${avStyle(m.uid)}">${userInitial(m.uid)}</div>`:''}
-    <div class="msg-bubble-wrap">
-      ${!isMine?`<div style="font-size:.72rem;color:var(--text3);margin-bottom:.1rem;padding-left:.1rem;">${name}</div>`:''}
-      <div class="msg-bubble" onmouseenter="showMsgActions('cma-${m.id}')" onmouseleave="hideMsgActions('cma-${m.id}')">${escHtml(m.text)}</div>
-      <div class="msg-actions" id="cma-${m.id}" onmouseenter="showMsgActions('cma-${m.id}')" onmouseleave="hideMsgActions('cma-${m.id}')">
-        <button class="msg-action-btn" onclick="tagInCommunity('${escHtml(name)}')">@ Tag</button>
-        ${isMine?`<button class="msg-action-btn del" onclick="deleteCommunityMsg('${m.id}')">Delete</button>`:''}
-      </div>
-      <div class="msg-time" style="text-align:${isMine?'right':'left'}">${timeAgo(m.time)}</div>
-    </div>
-  </div>`;
-}
-function tagInCommunity(name){
-  const inp=document.getElementById('community-inp');
-  if(inp){inp.value=(inp.value+' @'+name+' ').trimStart();inp.focus();}
-}
-function deleteCommunityMsg(msgId){
-  if(!confirm('Delete this message?'))return;
-  const m=state.communityMessages.find(x=>x.id===msgId);
-  if(m){m.deleted=true;saveState();renderCommunityMessages();scrollToBottom('community-msgs');}
-}
-function sendCommunity(){
-  const inp=document.getElementById('community-inp');
-  const txt=inp?.value?.trim();if(!txt)return;
-  const myUid=state.user?.id||'guest';
-  state.communityMessages.push({id:'cm'+uid(),uid:myUid,text:txt,time:Date.now(),deleted:false,replyTo:null});
-  saveState();inp.value='';inp.style.height='auto';
-  renderCommunityMessages();scrollToBottom('community-msgs');
-}
-function commKeydown(e){
-  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendCommunity();}
-}
-function commInput(el){
-  el.style.height='auto';
-  el.style.height=Math.min(el.scrollHeight,100)+'px';
-  const val=el.value;
-  const atIdx=val.lastIndexOf('@');
-  const hint=document.getElementById('tag-hint');
-  if(atIdx!==-1&&atIdx===val.length-1||(atIdx!==-1&&!val.slice(atIdx+1).includes(' ')&&val.slice(atIdx+1).length>0)){
-    const query=val.slice(atIdx+1).toLowerCase();
-    const matches=allUserNames().filter(n=>n.toLowerCase().startsWith(query)&&query.length>0);
-    if(matches.length){
-      hint.style.display='block';
-      hint.innerHTML=matches.slice(0,3).map(n=>`<span onclick="insertTag('${n}')" style="cursor:pointer;margin-right:.5rem;">@${n}</span>`).join('');
-    } else {hint.style.display='none';}
-  } else {hint.style.display='none';}
-}
-function insertTag(name){
-  const inp=document.getElementById('community-inp');
-  if(!inp)return;
-  const val=inp.value;
-  const atIdx=val.lastIndexOf('@');
-  inp.value=val.slice(0,atIdx)+'@'+name+' ';
-  document.getElementById('tag-hint').style.display='none';
-  inp.focus();
-}
-
-/* ===== POLLS ===== */
-function renderPolls(){
-  const c=document.getElementById('content');
-  if(!state.polls.length){c.innerHTML=`<div class="empty-state"><h3>No polls yet</h3><p>Create one using the + button!</p></div>`;return;}
-  c.innerHTML=state.polls.map(p=>pollHTML(p)).join('');
-}
-function pollHTML(p){
-  const me=state.user?.id||'guest';
-  const myVote=p.votes[me];
-  const total=Object.values(p.votes).length;
-  const isMine=p.uid===me;
-  const opts=p.options.map(opt=>{
-    const cnt=Object.values(p.votes).filter(v=>v===opt).length;
-    const pct=total?Math.round(cnt/total*100):0;
-    return `<button class="poll-opt ${myVote===opt?'voted':''}" onclick="vote('${p.id}','${opt.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
-      <div class="poll-bar" style="width:${myVote?pct:0}%"></div>
-      <span style="position:relative">${escHtml(opt)}</span>
-      ${myVote?`<span class="poll-pct">${pct}%</span>`:''}
-    </button>`;
-  }).join('');
-  return `<div class="poll-card">
-    ${isMine?`<button class="poll-delete-btn" onclick="deletePoll('${p.id}')" title="Delete poll">✕</button>`:''}
-    <div class="poll-category">${escHtml(p.category)}</div>
-    <div class="poll-q">${escHtml(p.question)}</div>
-    <div class="poll-sub">${escHtml(p.sub)}</div>
-    ${opts}
-    <div class="poll-meta">
-      <strong style="color:var(--text)">${userName(p.uid)}</strong> · ${total} vote${total!==1?'s':''} · ${timeAgo(p.time)}
-    </div>
-  </div>`;
-}
-function vote(pid,opt){
-  const me=state.user?.id||'guest';
-  const p=state.polls.find(x=>x.id===pid);if(!p)return;
-  if(p.votes[me]===opt)delete p.votes[me];else p.votes[me]=opt;
-  saveState();renderPolls();
-}
-function deletePoll(pid){
-  if(!confirm('Delete this poll?'))return;
-  const me=state.user?.id||'guest';
-  const idx=state.polls.findIndex(x=>x.id===pid);
-  if(idx===-1)return;
-  if(state.polls[idx].uid!==me)return showToast('Not your poll.');
-  state.polls.splice(idx,1);saveState();renderPolls();showToast('Poll deleted.');
-}
-
-/* ===== POLL MODAL ===== */
-function showPollModal(){
-  makeModal('Create a Poll');
-  document.getElementById('modal-body').innerHTML+=`
-    <div class="form-group">
-      <label class="form-label">Category</label>
-      <select class="form-select" id="poll-cat">
-        <option>General</option><option>Sports</option><option>Tech</option><option>Creative</option><option>Lifestyle</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Question <span style="font-weight:700;font-size:.9rem">(will appear bold)</span></label>
-      <input class="form-input" id="poll-q" placeholder="Your poll question..."/>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Subtitle</label>
-      <input class="form-input" id="poll-sub" placeholder="A short description or context..."/>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Options</label>
-      <div class="opt-list" id="opt-list">
-        <div class="opt-input-row"><input class="opt-inp" placeholder="Option 1"/><button class="rm-opt" onclick="rmOpt(this)">✕</button></div>
-        <div class="opt-input-row"><input class="opt-inp" placeholder="Option 2"/><button class="rm-opt" onclick="rmOpt(this)">✕</button></div>
-      </div>
-      <button class="add-opt" onclick="addOpt()">+ Add option</button>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary" onclick="submitPoll()">Create Poll</button>
-    </div>`;
-}
-function addOpt(){
-  const l=document.getElementById('opt-list');
-  const n=document.createElement('div');n.className='opt-input-row';
-  n.innerHTML=`<input class="opt-inp" placeholder="Option ${l.children.length+1}"/><button class="rm-opt" onclick="rmOpt(this)">✕</button>`;
-  l.appendChild(n);
-}
-function rmOpt(btn){
-  if(document.getElementById('opt-list').children.length>2)btn.parentElement.remove();
-  else showToast('Need at least 2 options.');
-}
-function submitPoll(){
-  const q=document.getElementById('poll-q')?.value?.trim();
-  const sub=document.getElementById('poll-sub')?.value?.trim();
-  const cat=document.getElementById('poll-cat')?.value;
-  const opts=[...document.querySelectorAll('.opt-inp')].map(e=>e.value.trim()).filter(Boolean);
-  if(!q)return showToast('Please add a question.');
-  if(opts.length<2)return showToast('Need at least 2 options.');
-  state.polls.unshift({id:'pl'+Date.now(),uid:state.user?.id||'guest',category:cat||'General',question:q,sub:sub||'',options:opts,votes:{},time:Date.now()});
-  saveState();closeModal();navigate('polls');showToast('Poll created! 📊');
-}
-
-/* ===== PROJECTS ===== */
-function renderProjects(){
-  const c=document.getElementById('content');
-  let html=`<div class="section-header"><div class="section-h">Active Projects</div></div>`;
-  if(!state.projects.length){html+=`<div class="empty-state"><h3>No projects yet</h3><p>Use the Host Project button to create one!</p></div>`;}
-  else html+=state.projects.map(p=>projectHTML(p)).join('');
-  c.innerHTML=html;
-}
-function projectHTML(p){
-  const me=state.user?.id||'guest';
-  const joined=p.members.includes(me)||p.uid===me;
-  const isMine=p.uid===me;
-  const full=p.max!=='unlimited'&&p.members.length>=parseInt(p.max);
-  return `<div class="project-card">
-    <div class="project-banner-placeholder">🗺️</div>
-    <div class="project-info">
-      <div class="project-name">${escHtml(p.name)}</div>
-      <div class="project-desc">${escHtml(p.desc)}</div>
-      <div class="project-meta">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        ${p.members.length}${p.max==='unlimited'?'':'/'+p.max} members · by ${userName(p.uid)}
-        ${full&&!joined?'<span class="tag" style="margin-left:.25rem">Full</span>':''}
-      </div>
-      <div class="project-actions">
-        ${!joined&&!full?`<button class="join-btn" onclick="joinProject('${p.id}')">Join</button>`:''}
-        ${joined?`<button class="join-btn" onclick="openProjectChat('${p.id}')">Open Chat</button>`:''}
-        ${isMine?`<button class="join-btn" style="background:transparent;border:1px solid var(--danger);color:var(--danger);" onclick="deleteProject('${p.id}')">Delete</button>`:''}
-      </div>
-    </div>
-  </div>`;
-}
-function joinProject(pid){
-  const me=state.user?.id||'guest';
-  const p=state.projects.find(x=>x.id===pid);if(!p)return;
-  if(p.members.includes(me))return;
-  if(p.max!=='unlimited'&&p.members.length>=parseInt(p.max))return showToast('Project is full.');
-  p.members.push(me);
-  if(!state.projectChats[pid])state.projectChats[pid]=[];
-  state.projectChats[pid].push({id:'pc'+uid(),uid:me,text:`${state.user?.name||'Guest'} joined the project! 👋`,time:Date.now(),deleted:false});
-  saveState();renderProjects();showToast('Joined '+p.name+'! 🎉');
-}
-function deleteProject(pid){
-  if(!confirm('Delete this project?'))return;
-  const me=state.user?.id||'guest';
-  const idx=state.projects.findIndex(x=>x.id===pid);
-  if(idx===-1)return;
-  if(state.projects[idx].uid!==me)return showToast('Not your project.');
-  state.projects.splice(idx,1);
-  saveState();renderProjects();showToast('Project deleted.');
-}
-function openProjectChat(pid){
-  const p=state.projects.find(x=>x.id===pid);if(!p)return;
-  navigate('chats');
-  setTimeout(()=>{
-    const cWin=document.getElementById('chat-window');if(!cWin)return;
-    document.getElementById('topbar-title').textContent=p.name;
-    if(!state.projectChats[pid])state.projectChats[pid]=[];
-    cWin.innerHTML=`
-      <div class="chat-header">
-        <div class="dm-av" style="background:var(--blue);width:34px;height:34px;">P</div>
-        <div>
-          <div style="font-weight:700;font-size:.9rem;">${escHtml(p.name)}</div>
-          <div style="font-size:.75rem;color:var(--text3);">${p.members.length} member${p.members.length!==1?'s':''}</div>
-        </div>
-      </div>
-      <div class="chat-messages" id="proj-msgs">${state.projectChats[pid].map((m,i)=>projMsgHTML(m,pid,i)).join('')}</div>
-      <div class="chat-input-row">
-        <input class="chat-inp" id="proj-inp" placeholder="Message ${escHtml(p.name)}..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendProjectMsg('${pid}');}"/>
-        <button class="send-btn" onclick="sendProjectMsg('${pid}')">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </button>
-      </div>`;
-    scrollToBottom('proj-msgs');
-  },60);
-}
-function projMsgHTML(m,pid,i){
-  const me=state.user?.id||'guest';
-  const isMine=(m.uid===me);
-  if(m.deleted)return `<div class="msg-row ${isMine?'mine':''}"><div class="msg-deleted">Message deleted</div></div>`;
-  const name=isMine?(state.user?.name||'You'):userName(m.uid);
-  return `<div class="msg-row ${isMine?'mine':''}" id="pm-${m.id}">
-    ${!isMine?`<div class="msg-av" style="${avStyle(m.uid)}">${userInitial(m.uid)}</div>`:''}
-    <div class="msg-bubble-wrap">
-      ${!isMine?`<div style="font-size:.72rem;color:var(--text3);margin-bottom:.1rem;">${name}</div>`:''}
-      <div class="msg-bubble" onmouseenter="showMsgActions('pma-${m.id}')" onmouseleave="hideMsgActions('pma-${m.id}')">${escHtml(m.text)}</div>
-      <div class="msg-actions" id="pma-${m.id}" onmouseenter="showMsgActions('pma-${m.id}')" onmouseleave="hideMsgActions('pma-${m.id}')">
-        <button class="msg-action-btn" onclick="tagInProject('${pid}','${escHtml(name)}')">@ Tag</button>
-        ${isMine?`<button class="msg-action-btn del" onclick="deleteProjectMsg('${pid}','${m.id}')">Delete</button>`:''}
-      </div>
-      <div class="msg-time" style="text-align:${isMine?'right':'left'}">${timeAgo(m.time)}</div>
-    </div>
-  </div>`;
-}
-function tagInProject(pid,name){
-  const inp=document.getElementById('proj-inp');
-  if(inp){inp.value=(inp.value+' @'+name+' ').trimStart();inp.focus();}
-}
-function deleteProjectMsg(pid,msgId){
-  if(!confirm('Delete this message?'))return;
-  const msgs=state.projectChats[pid]||[];
-  const m=msgs.find(x=>x.id===msgId);
-  if(m){m.deleted=true;saveState();
-    const el=document.getElementById('pm-'+msgId);
-    if(el)el.outerHTML=`<div class="msg-row mine"><div class="msg-deleted">Message deleted</div></div>`;
-  }
-}
-function sendProjectMsg(pid){
-  const inp=document.getElementById('proj-inp');
-  const txt=inp?.value?.trim();if(!txt)return;
-  const myUid=state.user?.id||'guest';
-  if(!state.projectChats[pid])state.projectChats[pid]=[];
-  const msgId='pc'+uid();
-  state.projectChats[pid].push({id:msgId,uid:myUid,text:txt,time:Date.now(),deleted:false});
-  saveState();inp.value='';
-  const c=document.getElementById('proj-msgs');
-  if(c){c.innerHTML=state.projectChats[pid].map((m,i)=>projMsgHTML(m,pid,i)).join('');scrollToBottom('proj-msgs');}
-}
-
-/* ===== PROJECT MODAL ===== */
-function showProjectModal(){
-  const me=state.user?.id||'guest';
-  const myProj=state.projects.find(p=>p.uid===me);
-  if(myProj)return showToast('You already host a project. Delete it first to create a new one.');
-  makeModal('Host a Project');
-  document.getElementById('modal-body').innerHTML+=`
-    <div class="form-group">
-      <label class="form-label">Project Name</label>
-      <input class="form-input" id="proj-name" placeholder="My awesome project..."/>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Description</label>
-      <input class="form-input" id="proj-desc" placeholder="What is this project about?"/>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Max Members</label>
-      <select class="form-select" id="proj-max">
-        <option value="2">2</option><option value="3">3</option><option value="4">4</option>
-        <option value="5" selected>5</option><option value="6">6</option>
-        <option value="10">10</option><option value="20">20</option>
-        <option value="unlimited">Unlimited</option>
-      </select>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary" onclick="submitProject()">Host Project</button>
-    </div>`;
-}
-function submitProject(){
-  const name=document.getElementById('proj-name')?.value?.trim();
-  const desc=document.getElementById('proj-desc')?.value?.trim();
-  const max=document.getElementById('proj-max')?.value;
-  if(!name)return showToast('Please add a project name.');
-  const me=state.user?.id||'guest';
-  const pid='pr'+Date.now();
-  state.projects.unshift({id:pid,uid:me,name,desc:desc||'',max,members:[me],time:Date.now()});
-  state.projectChats[pid]=[{id:'pc'+uid(),uid:me,text:'Project created! Welcome everyone 🎉',time:Date.now(),deleted:false}];
-  saveState();closeModal();renderProjects();showToast('Project hosted! 🚀');
-}
-
-/* ===== PROFILE ===== */
-function renderProfile(uid2){
-  const me=state.user?.id||'guest';
-  const isMe=(uid2==='me'||uid2===me);
-  const u=isMe?state.user:state.users[uid2];
-  if(!u){document.getElementById('content').innerHTML=`<div class="empty-state"><h3>User not found</h3></div>`;return;}
-  const myPosts=isMe?state.posts.filter(p=>p.uid===me):state.posts.filter(p=>p.uid===uid2);
-  document.getElementById('content').innerHTML=`
-    <div class="profile-header">
-      <div class="profile-av-lg" style="${avStyle(uid2)}">${(u.name||'G').charAt(0).toUpperCase()}</div>
-      <div class="profile-name">${escHtml(u.name||'Guest')}</div>
-      <div class="profile-bio">${escHtml(u.bio||'No bio yet.')}</div>
-      <div class="profile-stats">
-        <div class="pstat"><div class="pstat-num">${myPosts.length}</div><div class="pstat-label">Posts</div></div>
-        <div class="pstat"><div class="pstat-num">${u.isGuest?'—':Object.keys(state.users).length}</div><div class="pstat-label">Following</div></div>
-        <div class="pstat"><div class="pstat-num">${myPosts.reduce((a,p)=>a+(p.likes?p.likes.length:0),0)}</div><div class="pstat-label">Likes</div></div>
-      </div>
-      ${isMe&&!u.isGuest?`<button class="edit-btn" onclick="showEditProfile()">Edit Profile</button>`:''}
-      ${isMe&&u.isGuest?`<div style="margin-top:.75rem;font-size:.8rem;color:var(--text3);">Guest accounts cannot edit their profile.</div>`:''}
-      ${!isMe?`<button class="edit-btn" onclick="navigate('chats');setTimeout(()=>openDM('${uid2}'),80)">Message</button>`:''}
-    </div>
-    <div class="section-header" style="margin-top:1.25rem"><div class="section-h">Posts</div></div>
-    ${myPosts.length?myPosts.map(p=>postHTML(p)).join(''):'<div class="empty-state"><p>No posts yet.</p></div>'}`;
-}
-function showEditProfile(){
-  makeModal('Edit Profile');
-  document.getElementById('modal-body').innerHTML+=`
-    <div class="form-group">
-      <label class="form-label">Display Name</label>
-      <input class="form-input" id="ep-name" value="${escHtml(state.user?.name||'')}"/>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Bio</label>
-      <textarea class="form-textarea" id="ep-bio">${escHtml(state.user?.bio||'')}</textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary" onclick="saveProfile()">Save</button>
-    </div>`;
-}
-function saveProfile(){
-  const name=document.getElementById('ep-name')?.value?.trim();
-  const bio=document.getElementById('ep-bio')?.value?.trim();
-  if(name)state.user.name=name;
-  if(bio!==undefined)state.user.bio=bio;
-  saveState();updateSidebarUser();closeModal();renderProfile('me');showToast('Profile updated! ✨');
-}
-
-/* ===== SETTINGS ===== */
-function renderSettings(){
-  document.getElementById('content').innerHTML=`
-    <div class="settings-section">
-      <div class="settings-title">Appearance</div>
-      <div class="setting-row">
-        <div><div class="setting-label">Theme</div><div class="setting-sub">Choose your colour palette</div></div>
-        <div class="theme-btns">
-          <button class="theme-btn ${state.theme==='light-amber'?'active':''}" onclick="setTheme('light-amber',this)">☀️ Amber</button>
-          <button class="theme-btn ${state.theme==='dark-amber'?'active':''}" onclick="setTheme('dark-amber',this)">🌙 Amber</button>
-          <button class="theme-btn ${state.theme==='light-lapis'?'active':''}" onclick="setTheme('light-lapis',this)">☀️ Lapis</button>
-          <button class="theme-btn ${state.theme==='dark-lapis'?'active':''}" onclick="setTheme('dark-lapis',this)">🌙 Lapis</button>
-        </div>
-      </div>
-    </div>
-    <div class="settings-section">
-      <div class="settings-title">Account</div>
-      <div class="setting-row">
-        <div><div class="setting-label">Status</div><div class="setting-sub">${state.user?.isGuest?'Guest Account':'Registered Account'}</div></div>
-        ${state.user?.isGuest?`<button class="theme-btn" onclick="showToast('Sign up coming soon!')">Sign up</button>`:''}
-      </div>
-      <div class="setting-row">
-        <div><div class="setting-label">Sign out</div></div>
-        <button class="theme-btn" onclick="signOut()">Sign out</button>
-      </div>
-    </div>
-    <div class="settings-section">
-      <div class="settings-title">About Ember</div>
-      <div class="setting-row"><div class="setting-label">Version</div><div style="color:var(--text3);font-size:.85rem;">1.0.0</div></div>
-      <div class="setting-row"><div class="setting-label">Made with</div><div style="color:var(--accent);font-size:.85rem;">🔥 passion</div></div>
-    </div>`;
-}
-function signOut(){
-  // Also sign out from Supabase
-  supabaseClient.auth.signOut();
-  state.user=null;
-  document.getElementById('app').classList.remove('visible');
-  document.getElementById('auth-page').style.display='flex';
-  saveState();
-}
-
-/* ===== MODAL HELPERS ===== */
-function makeModal(title){
+/* =====================================================
+   MODAL HELPERS
+   ===================================================== */
+function makeModal(title) {
   closeModal();
-  const ov=document.createElement('div');
-  ov.className='modal-overlay';ov.id='modal-overlay';
-  ov.innerHTML=`<div class="modal"><div class="modal-title">${title}</div><div id="modal-body"></div></div>`;
-  ov.addEventListener('click',e=>{if(e.target===ov)closeModal();});
+  const ov = document.createElement('div');
+  ov.className = 'modal-overlay'; ov.id = 'modal-overlay';
+  ov.innerHTML = `<div class="modal"><div class="modal-title">${title}</div><div id="modal-body"></div></div>`;
+  ov.addEventListener('click', e => { if (e.target === ov) closeModal(); });
   document.body.appendChild(ov);
   return document.getElementById('modal-body');
 }
-function closeModal(){const o=document.getElementById('modal-overlay');if(o)o.remove();}
+function closeModal() { document.getElementById('modal-overlay')?.remove(); }
 
-/* ===== SCROLL ===== */
-function scrollToBottom(id){const el=document.getElementById(id);if(el)setTimeout(()=>el.scrollTop=el.scrollHeight,50);}
+/* =====================================================
+   SCROLL
+   ===================================================== */
+function scrollToBottom(id) { const el = document.getElementById(id); if (el) setTimeout(() => el.scrollTop = el.scrollHeight, 50); }
 
-/* ===== INIT ===== */
-async function init(){
-  const saved=ls('ember_data2');
-  if(saved&&saved.posts){
-    Object.assign(state,saved);
-    document.body.setAttribute('data-theme',state.theme||'light-amber');
-    SAMPLE_USERS.forEach(u=>{if(!state.users[u.id])state.users[u.id]=u;});
+/* =====================================================
+   INIT
+   ===================================================== */
+async function init() {
+  const saved = ls('ember_data2');
+  if (saved && saved.posts) {
+    Object.assign(state, saved);
+    document.body.setAttribute('data-theme', state.theme || 'light-amber');
+    SAMPLE_USERS.forEach(u => { if (!state.users[u.id]) state.users[u.id] = u; });
   } else {
     initSampleData();
   }
 
-  // Check if there's an active Supabase session (persisted login)
+  // Check for a persisted Supabase session
   const { data: { session } } = await supabaseClient.auth.getSession();
   if (session && session.user) {
     const user = session.user;
-    // Fetch the stored username
+
+    // Fetch display name from profiles.username (source of truth)
     const { data: profile } = await supabaseClient
       .from('profiles')
       .select('username')
       .eq('id', user.id)
       .maybeSingle();
 
-    const displayName = profile?.username || user.email.split('@')[0];
+    const displayName =
+      profile?.username ||
+      user.user_metadata?.display_name ||
+      user.email.split('@')[0];
 
     state.user = {
       id: user.id,
@@ -2045,28 +2059,30 @@ async function init(){
       bio: state.user?.bio || '',
       isGuest: false
     };
+
+    // Seed postAuthors cache with own name on startup
+    if (!state.postAuthors) state.postAuthors = {};
+    state.postAuthors[user.id] = displayName;
+
     saveState();
-    document.getElementById('auth-page').style.display='none';
+    document.getElementById('auth-page').style.display = 'none';
     document.getElementById('app').classList.add('visible');
     updateSidebarUser();
     navigate('feed');
-    
-    // ✅ Load posts from Supabase on startup
     await loadPosts();
     return;
   }
 
-  // No session — check for saved guest user
-  if(state.user){
-    document.getElementById('auth-page').style.display='none';
+  // No session — restore guest user if one was saved
+  if (state.user) {
+    document.getElementById('auth-page').style.display = 'none';
     document.getElementById('app').classList.add('visible');
     updateSidebarUser();
     navigate('feed');
-    
-    // ✅ Load posts from Supabase on startup for guest users too
     await loadPosts();
   }
 }
+
 init();
 </script>
 </body>
