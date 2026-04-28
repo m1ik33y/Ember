@@ -2048,6 +2048,9 @@ async function init(){
     document.getElementById('app').classList.add('visible');
     updateSidebarUser();
     navigate('feed');
+    
+    // ✅ Load posts from Supabase on startup
+    await loadPosts();
     return;
   }
 
@@ -2057,6 +2060,9 @@ async function init(){
     document.getElementById('app').classList.add('visible');
     updateSidebarUser();
     navigate('feed');
+    
+    // ✅ Load posts from Supabase on startup for guest users too
+    await loadPosts();
   }
 }
 init();
