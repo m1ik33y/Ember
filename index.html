@@ -634,8 +634,17 @@ async function signUp() {
 
   const user = loginData.user;
 
-  // 3. Upsert profile (safe if row already exists)
-  await supabaseClient.from('profiles').upsert({ id: user.id, username }, { onConflict: 'id' });
+  // 3. Insert profile (must succeed before continuing)
+  const { error: profileError } = await supabaseClient.from('profiles').insert({ 
+    id: user.id, 
+    username: username 
+  });
+
+  if (profileError) {
+    setAuthLoading('btn-signup', false, 'Create Account');
+    console.error('Profile creation error:', profileError);
+    return showAuthError('Failed to create profile: ' + profileError.message);
+  }
 
   // 4. Set state with REAL uid from Supabase
   state.user = {
@@ -672,13 +681,19 @@ async function login() {
   const user = data.user;
 
   // Fetch the profile row so we get the stored username
-  const { data: profile } = await supabaseClient
+  const { data: profile, error: profileError } = await supabaseClient
     .from('profiles')
     .select('username')
     .eq('id', user.id)
     .single();
 
-  // Use profile username if available, otherwise fall back to email prefix
+  if (profileError) {
+    console.error('Profile fetch error:', profileError);
+    setAuthLoading('btn-login', false, 'Sign In');
+    return showAuthError('Profile not found. Please sign up first.');
+  }
+
+  // Use profile username
   const displayName = profile?.username || email.split('@')[0];
 
   state.user = {
@@ -1298,18 +1313,96 @@ function handlePostMedia(e){
   reader.readAsDataURL(file);
 }
 
-function submitPost(){
-  const txt=document.getElementById('post-text')?.value?.trim();
-  const title=document.getElementById('post-title')?.value?.trim();
-  if(!_postMediaData)return showToast('Please upload an image or video first.');
-  const uid2=state.user?.id||'guest';
-  state.posts.unshift({
-    id:'p'+Date.now(),uid:uid2,
-    text:txt||'',title:title||'',
-    mediaUrl:_postMediaData,mediaType:_postMediaType,
-    time:Date.now(),likes:[],comments:[]
-  });
-  saveState();closeModal();navigate('feed');showToast('Posted! ✨');
+async function submitPost(){
+  const txt = document.getElementById('post-text')?.value?.trim();
+  const title = document.getElementById('post-title')?.value?.trim();
+
+  const fileInput = document.getElementById('media-file-input');
+  const file = fileInput?.files[0];
+
+  if(!file) return showToast('Upload media first');
+
+  try {
+    // 🔹 get current user
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    
+    if (userError || !user) {
+      console.error('Auth error:', userError);
+      return showToast('Please sign in first');
+    }
+
+    // 🔹 IMPORTANT: Ensure profile exists before posting
+    const { data: profileExists } = await supabaseClient
+      .from('profiles')
+      .select('id')
+      .eq('id', user.id)
+      .single();
+
+    if (!profileExists) {
+      console.log('Profile not found, creating it...');
+      const { error: profileCreateError } = await supabaseClient
+        .from('profiles')
+        .insert([{ id: user.id, username: user.email?.split('@')[0] || 'user' }]);
+      
+      if (profileCreateError) {
+        console.error('Profile creation error:', profileCreateError);
+        return showToast('Profile setup failed: ' + profileCreateError.message);
+      }
+    }
+
+    // 🔹 unique file name
+    const fileName = `${user.id}/${Date.now()}_${file.name}`;
+
+    // 🔹 upload to storage
+    const { data: uploadData, error: uploadError } = await supabaseClient
+      .storage
+      .from('posts')
+      .upload(fileName, file);
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      return showToast('Upload failed: ' + uploadError.message);
+    }
+
+    // 🔹 get public URL (synchronous method)
+    const { data: urlData } = supabaseClient
+      .storage
+      .from('posts')
+      .getPublicUrl(fileName);
+
+    const publicURL = urlData?.publicUrl;
+
+    if (!publicURL) {
+      return showToast('Failed to get media URL');
+    }
+
+    // 🔹 detect type
+    const mediaType = file.type.startsWith('video/') ? 'video' : 'image';
+
+    // 🔹 save to DB
+    const { data: insertData, error: insertError } = await supabaseClient
+      .from('posts')
+      .insert([{
+        user_id: user.id,
+        text: txt || '',
+        title: title || '',
+        media_url: publicURL,
+        media_type: mediaType
+      }])
+      .select();
+
+    if (insertError) {
+      console.error('Insert error:', insertError);
+      return showToast('Failed to post: ' + insertError.message);
+    }
+
+    closeModal();
+    await loadPosts();
+    showToast('Posted! ✨');
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    showToast('Something went wrong');
+  }
 }
 
 /* ===== CHATS ===== */
@@ -1355,6 +1448,40 @@ function renderChats(){
 
   wrap.appendChild(dmSide);
   wrap.appendChild(cWin);
+}
+
+async function loadPosts(){
+  const { data, error } = await supabaseClient
+    .from('posts')
+    .select(`
+        *,
+        profiles!inner(username)
+      `)
+    .order('created_at', { ascending: false });
+
+  if(error){
+    console.error('Load posts error:', error);
+    const { data: fallbackData, error: fallbackError } = await supabaseClient
+      .from('posts')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if(fallbackError) return showToast('Failed to load posts');
+    data = fallbackData;
+  }
+
+  state.posts = data.map(p => ({
+    id: p.id,
+    uid: p.user_id,
+    text: p.text,
+    title: p.title,
+    mediaUrl: p.media_url,
+    mediaType: p.media_type,
+    time: new Date(p.created_at).getTime(),
+    likes: [], // you’ll fix later
+    comments: []
+  }));
+
+  renderFeed();
 }
 
 function openDM(uid2){
@@ -1906,7 +2033,7 @@ async function init(){
       .from('profiles')
       .select('username')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     const displayName = profile?.username || user.email.split('@')[0];
 
