@@ -656,7 +656,7 @@ async function signUp() {
 
   setAuthLoading('btn-signup', false, 'Create Account');
   saveState();
-  enterApp();
+  await enterApp();
 }
 
 /* ===================================================
@@ -705,7 +705,7 @@ async function login() {
 
   setAuthLoading('btn-login', false, 'Sign In');
   saveState();
-  enterApp();
+  await enterApp();
 }
 </script>
 
@@ -788,11 +788,13 @@ function joinAsGuest(){
   enterApp();
 }
 
-function enterApp(){
+async function enterApp(){
   document.getElementById('auth-page').style.display='none';
   document.getElementById('app').classList.add('visible');
   updateSidebarUser();
   navigate('feed');
+  // Load posts from Supabase when entering the app
+  await loadPosts();
 }
 
 function updateSidebarUser(){
