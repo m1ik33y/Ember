@@ -657,17 +657,20 @@ async function signUp() {
     return showAuthError('Failed to create profile: ' + profileError.message);
   }
 
-  // 5. Set state with REAL uid from Supabase
+  // 5. Store user info (but don't enter app yet - email not verified)
   state.user = {
     id: user.id,
     name: username,
     bio: '',
-    isGuest: false
+    isGuest: false,
+    emailVerified: false
   };
 
   setAuthLoading('btn-signup', false, 'Create Account');
   saveState();
-  await enterApp();
+
+  // 6. Show email confirmation message
+  showEmailConfirmationMessage(email);
 }
 
 /* ===================================================
@@ -691,6 +694,22 @@ async function login() {
 
   const user = data.user;
 
+  // ⚠️ Check if email is verified
+  if (!user.email_confirmed_at) {
+    // Email not confirmed - show verification gate
+    state.user = {
+      id: user.id,
+      name: user.user_metadata?.display_name || user.email.split('@')[0],
+      bio: '',
+      isGuest: false,
+      emailVerified: false
+    };
+    setAuthLoading('btn-login', false, 'Sign In');
+    saveState();
+    showEmailVerificationGate();
+    return;
+  }
+
   // Fetch the profile row so we get the stored username
   const { data: profile, error: profileError } = await supabaseClient
     .from('profiles')
@@ -711,12 +730,129 @@ async function login() {
     id: user.id,
     name: displayName,
     bio: '',
-    isGuest: false
+    isGuest: false,
+    emailVerified: true
   };
 
   setAuthLoading('btn-login', false, 'Sign In');
   saveState();
   await enterApp();
+}
+
+/* ===================================================
+   EMAIL VERIFICATION
+   =================================================== */
+function showEmailConfirmationMessage(email) {
+  showAuthError('');
+  const signupFields = document.getElementById('signup-fields');
+  const loginFields = document.getElementById('login-fields');
+  
+  signupFields.style.display = 'none';
+  loginFields.style.display = 'none';
+  
+  const authBox = document.querySelector('.auth-box');
+  const existingMsg = document.getElementById('email-confirmation-msg');
+  if (existingMsg) existingMsg.remove();
+  
+  const confirmMsg = document.createElement('div');
+  confirmMsg.id = 'email-confirmation-msg';
+  confirmMsg.innerHTML = `
+    <div style="padding: 1.5rem; text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 1rem;">📧</div>
+      <h2 style="color: var(--accent); margin-bottom: 0.5rem; font-family: 'Cinzel', serif;">Verify Your Email</h2>
+      <p style="color: var(--text3); margin-bottom: 1rem;">We sent a confirmation link to <strong>${email}</strong></p>
+      <p style="color: var(--text2); font-size: 0.9rem; margin-bottom: 1.5rem;">Click the link in your email to verify your account and get started.</p>
+      <button class="btn-guest" onclick="switchTab('login')" style="margin-bottom: 0.5rem;">← Back to Sign In</button>
+      <p style="font-size: 0.8rem; color: var(--text3); margin-top: 1rem;">Didn't receive the email? Check your spam folder.</p>
+    </div>
+  `;
+  authBox.appendChild(confirmMsg);
+}
+
+function showEmailVerificationGate() {
+  // Hide all auth fields
+  const signupFields = document.getElementById('signup-fields');
+  const loginFields = document.getElementById('login-fields');
+  
+  signupFields.style.display = 'none';
+  loginFields.style.display = 'none';
+  
+  // Hide auth tabs
+  const authTabs = document.querySelector('.auth-tabs');
+  authTabs.style.display = 'none';
+  
+  const authBox = document.querySelector('.auth-box');
+  const existingMsg = document.getElementById('email-verification-gate');
+  if (existingMsg) existingMsg.remove();
+  
+  const verifyMsg = document.createElement('div');
+  verifyMsg.id = 'email-verification-gate';
+  verifyMsg.innerHTML = `
+    <div style="padding: 1.5rem; text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔒</div>
+      <h2 style="color: var(--accent); margin-bottom: 0.5rem; font-family: 'Cinzel', serif;">Email Verification Required</h2>
+      <p style="color: var(--text2); margin-bottom: 1.5rem;">Please verify your email address to access your account.</p>
+      <p style="color: var(--text3); font-size: 0.9rem; margin-bottom: 1rem;">A confirmation link was sent to your email. Click it to verify your account.</p>
+      <button class="btn-guest" onclick="resendConfirmationEmail()" style="margin-bottom: 0.75rem; width: 100%;">Resend Confirmation Email</button>
+      <button class="btn-guest" onclick="logOutAndReset()" style="background: var(--bg2); color: var(--text); margin-bottom: 0.5rem; width: 100%;">← Try Different Email</button>
+      <p style="font-size: 0.75rem; color: var(--text3); margin-top: 1rem;">Once you verify your email, you'll be able to log in and use your account.</p>
+    </div>
+  `;
+  authBox.appendChild(verifyMsg);
+}
+
+async function resendConfirmationEmail() {
+  if (!state.user || !state.user.id) {
+    showAuthError('Unable to find user. Please sign in again.');
+    return;
+  }
+
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  try {
+    const { error } = await supabaseClient.auth.resend({
+      type: 'signup',
+      email: state.user.email || (await supabaseClient.auth.getUser()).data.user?.email
+    });
+
+    if (error) {
+      showAuthError('Failed to resend email: ' + error.message);
+    } else {
+      showAuthError('');
+      btn.textContent = 'Email Sent! ✓';
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = 'Resend Confirmation Email';
+      }, 3000);
+    }
+  } catch (err) {
+    console.error('Resend error:', err);
+    showAuthError('An error occurred. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Resend Confirmation Email';
+  }
+}
+
+async function logOutAndReset() {
+  await supabaseClient.auth.signOut();
+  state.user = null;
+  saveState();
+  
+  // Reset UI
+  const authTabs = document.querySelector('.auth-tabs');
+  authTabs.style.display = '';
+  document.getElementById('signup-fields').style.display = '';
+  document.getElementById('login-fields').style.display = 'none';
+  
+  const verifyGate = document.getElementById('email-verification-gate');
+  if (verifyGate) verifyGate.remove();
+  
+  const confirmMsg = document.getElementById('email-confirmation-msg');
+  if (confirmMsg) confirmMsg.remove();
+  
+  switchTab('signup');
 }
 </script>
 
@@ -2051,6 +2187,22 @@ async function init(){
   const { data: { session } } = await supabaseClient.auth.getSession();
   if (session && session.user) {
     const user = session.user;
+
+    // ⚠️ Check if email is verified
+    if (!user.email_confirmed_at) {
+      // Email not confirmed - show verification gate
+      state.user = {
+        id: user.id,
+        name: user.user_metadata?.display_name || user.email.split('@')[0],
+        bio: '',
+        isGuest: false,
+        emailVerified: false
+      };
+      saveState();
+      showEmailVerificationGate();
+      return;
+    }
+
     // Fetch the stored username
     const { data: profile } = await supabaseClient
       .from('profiles')
@@ -2064,7 +2216,8 @@ async function init(){
       id: user.id,
       name: displayName,
       bio: state.user?.bio || '',
-      isGuest: false
+      isGuest: false,
+      emailVerified: true
     };
     saveState();
     document.getElementById('auth-page').style.display='none';
