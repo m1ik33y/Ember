@@ -127,6 +127,15 @@ html,body{height:100%;font-family:'Lato',sans-serif;background:var(--bg);color:v
   font-size:.88rem;cursor:pointer;transition:all .2s;font-weight:600;
 }
 .auth-tab.active{background:var(--card);color:var(--accent);box-shadow:0 2px 8px var(--shadow);}
+.otp-box{
+  width:40px;height:40px;text-align:center;font-size:1.2rem;
+  border:2px solid var(--border2);border-radius:8px;background:var(--card2);
+  color:var(--text);font-weight:700;font-family:'Lato',sans-serif;
+  outline:none;transition:all .2s;
+}
+.otp-box:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accentbg);}
+.otp-box:hover{border-color:var(--accent2);}
+
 
 /* ===== APP SHELL ===== */
 #app{display:none;height:100vh;flex-direction:row;overflow:hidden;}
@@ -603,8 +612,7 @@ function setAuthLoading(btnId, loading, label) {
 }
 
 /* ===================================================
-   FIX 2: SIGN UP — fetch profile after login to populate
-   state.user with the real Supabase uid + username
+   FIX 2: SIGN UP — send OTP and show OTP input
    =================================================== */
 async function signUp() {
   showAuthError('');
@@ -619,22 +627,22 @@ async function signUp() {
   setAuthLoading('btn-signup', true, 'Create Account');
 
   // 1. Sign up
-  const { error: signUpError } = await supabaseClient.auth.signUp({ email, password });
+  const { error: signUpError, data: signUpData } = await supabaseClient.auth.signUp({ 
+    email, 
+    password,
+    options: {
+      emailRedirectTo: 'https://emberel.vercel.app/auth/callback'
+    }
+  });
+  
   if (signUpError) {
     setAuthLoading('btn-signup', false, 'Create Account');
     return showAuthError(signUpError.message);
   }
 
-  // 2. Sign in immediately (Supabase may auto-confirm in dev, or require email confirm)
-  const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if (loginError) {
-    setAuthLoading('btn-signup', false, 'Create Account');
-    return showAuthError('Account created! Check your email to confirm, then sign in.');
-  }
+  const user = signUpData.user;
 
-  const user = loginData.user;
-
-  // 3. Update user metadata with display name
+  // 2. Update user metadata with display name
   const { error: metadataError } = await supabaseClient.auth.updateUser({
     data: { display_name: username }
   });
@@ -645,7 +653,7 @@ async function signUp() {
     return showAuthError('Failed to update profile: ' + metadataError.message);
   }
 
-  // 4. Insert profile (must succeed before continuing)
+  // 3. Insert profile
   const { error: profileError } = await supabaseClient.from('profiles').insert({ 
     id: user.id, 
     username: username 
@@ -657,10 +665,11 @@ async function signUp() {
     return showAuthError('Failed to create profile: ' + profileError.message);
   }
 
-  // 5. Store user info (but don't enter app yet - email not verified)
+  // 4. Store temp user info (for OTP verification)
   state.user = {
     id: user.id,
     name: username,
+    email: email,
     bio: '',
     isGuest: false,
     emailVerified: false
@@ -669,12 +678,12 @@ async function signUp() {
   setAuthLoading('btn-signup', false, 'Create Account');
   saveState();
 
-  // 6. Show email confirmation message
-  showEmailConfirmationMessage(email);
+  // 5. Show OTP input screen
+  showOTPInput(email, 'signup');
 }
 
 /* ===================================================
-   FIX 2: LOGIN — fetch the profile row to get username
+   FIX 2: LOGIN — check email verification and show OTP if needed
    =================================================== */
 async function login() {
   showAuthError('');
@@ -696,17 +705,18 @@ async function login() {
 
   // ⚠️ Check if email is verified
   if (!user.email_confirmed_at) {
-    // Email not confirmed - show verification gate
+    // Email not confirmed - show OTP input
     state.user = {
       id: user.id,
       name: user.user_metadata?.display_name || user.email.split('@')[0],
+      email: email,
       bio: '',
       isGuest: false,
       emailVerified: false
     };
     setAuthLoading('btn-login', false, 'Sign In');
     saveState();
-    showEmailVerificationGate();
+    showOTPInput(email, 'login');
     return;
   }
 
@@ -740,8 +750,213 @@ async function login() {
 }
 
 /* ===================================================
-   EMAIL VERIFICATION
+   EMAIL OTP VERIFICATION
    =================================================== */
+function showOTPInput(email, mode) {
+  showAuthError('');
+  const signupFields = document.getElementById('signup-fields');
+  const loginFields = document.getElementById('login-fields');
+  
+  signupFields.style.display = 'none';
+  loginFields.style.display = 'none';
+  
+  const authBox = document.querySelector('.auth-box');
+  const existingMsg = document.getElementById('otp-input-container');
+  if (existingMsg) existingMsg.remove();
+  
+  const otpContainer = document.createElement('div');
+  otpContainer.id = 'otp-input-container';
+  otpContainer.innerHTML = `
+    <div style="padding: 1rem 0;">
+      <div style="font-size: 2rem; text-align: center; margin-bottom: 1rem;">📧</div>
+      <h2 style="color: var(--accent); margin: 0 0 0.5rem; font-family: 'Cinzel', serif; text-align: center; font-size: 1.3rem;">Verify Your Email</h2>
+      <p style="color: var(--text3); margin: 0.5rem 0 1.5rem; text-align: center; font-size: 0.9rem;">We sent a 6-digit code to<br><strong>${email}</strong></p>
+      
+      <div style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem;">
+        <input class="otp-box" id="otp-1" type="text" maxlength="1" inputmode="numeric" style="width: 40px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid var(--border2); border-radius: 8px; background: var(--card2); color: var(--text); font-weight: 700;" />
+        <input class="otp-box" id="otp-2" type="text" maxlength="1" inputmode="numeric" style="width: 40px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid var(--border2); border-radius: 8px; background: var(--card2); color: var(--text); font-weight: 700;" />
+        <input class="otp-box" id="otp-3" type="text" maxlength="1" inputmode="numeric" style="width: 40px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid var(--border2); border-radius: 8px; background: var(--card2); color: var(--text); font-weight: 700;" />
+        <input class="otp-box" id="otp-4" type="text" maxlength="1" inputmode="numeric" style="width: 40px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid var(--border2); border-radius: 8px; background: var(--card2); color: var(--text); font-weight: 700;" />
+        <input class="otp-box" id="otp-5" type="text" maxlength="1" inputmode="numeric" style="width: 40px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid var(--border2); border-radius: 8px; background: var(--card2); color: var(--text); font-weight: 700;" />
+        <input class="otp-box" id="otp-6" type="text" maxlength="1" inputmode="numeric" style="width: 40px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid var(--border2); border-radius: 8px; background: var(--card2); color: var(--text); font-weight: 700;" />
+      </div>
+      
+      <button class="btn-guest" id="verify-otp-btn" onclick="verifyOTP('${email}', '${mode}')" style="width: 100%; margin-bottom: 0.75rem;">Verify Code</button>
+      <button class="btn-guest" onclick="resendOTP('${email}')" style="background: var(--bg2); color: var(--text); width: 100%; margin-bottom: 0.75rem;">Resend Code</button>
+      <button class="btn-guest" onclick="backToAuth('${mode}')" style="background: var(--bg2); color: var(--text); width: 100%;">← Back</button>
+      
+      <p style="font-size: 0.75rem; color: var(--text3); margin-top: 1rem; text-align: center;">The code is valid for 10 minutes. Check your spam folder if you don't see the email.</p>
+    </div>
+  `;
+  authBox.appendChild(otpContainer);
+  
+  // Auto-focus first OTP input
+  setTimeout(() => document.getElementById('otp-1').focus(), 100);
+  
+  // Setup OTP box navigation (auto-move to next on input)
+  setupOTPNavigation();
+}
+
+function setupOTPNavigation() {
+  const otpBoxes = document.querySelectorAll('.otp-box');
+  
+  otpBoxes.forEach((box, idx) => {
+    box.addEventListener('input', (e) => {
+      // Only allow numbers
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+      
+      // Auto-move to next box if a digit is entered
+      if (e.target.value && idx < otpBoxes.length - 1) {
+        otpBoxes[idx + 1].focus();
+      }
+      
+      // Auto-verify if all boxes are filled
+      const allFilled = Array.from(otpBoxes).every(b => b.value);
+      if (allFilled) {
+        // Small delay before auto-verify
+        setTimeout(() => {
+          const email = state.user?.email || '';
+          const mode = document.getElementById('verify-otp-btn').onclick.toString().includes('signup') ? 'signup' : 'login';
+          verifyOTP(email, mode);
+        }, 200);
+      }
+    });
+    
+    box.addEventListener('keydown', (e) => {
+      // Backspace to go to previous box
+      if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+        otpBoxes[idx - 1].focus();
+      }
+    });
+    
+    box.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pasted = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6);
+      
+      // Fill boxes with pasted digits
+      Array.from(pasted).forEach((digit, i) => {
+        if (otpBoxes[i]) otpBoxes[i].value = digit;
+      });
+      
+      // Focus last filled box or last box
+      const lastIdx = Math.min(pasted.length - 1, otpBoxes.length - 1);
+      if (lastIdx >= 0) otpBoxes[Math.min(lastIdx + 1, otpBoxes.length - 1)].focus();
+    });
+  });
+}
+
+async function verifyOTP(email, mode) {
+  const otpBoxes = document.querySelectorAll('.otp-box');
+  const otp = Array.from(otpBoxes).map(box => box.value).join('');
+  
+  if (otp.length !== 6) {
+    showAuthError('Please enter all 6 digits.');
+    return;
+  }
+  
+  const btn = document.getElementById('verify-otp-btn');
+  btn.disabled = true;
+  btn.textContent = 'Verifying...';
+  
+  try {
+    // Verify the OTP
+    const { data, error } = await supabaseClient.auth.verifyOtp({
+      email: email,
+      token: otp,
+      type: 'email'
+    });
+    
+    if (error) {
+      showAuthError('Invalid code. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Verify Code';
+      // Clear OTP boxes
+      otpBoxes.forEach(box => box.value = '');
+      otpBoxes[0].focus();
+      return;
+    }
+    
+    // Email verified! Now log the user in fully
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    
+    // Fetch profile
+    const { data: profile } = await supabaseClient
+      .from('profiles')
+      .select('username')
+      .eq('id', user.id)
+      .maybeSingle();
+    
+    const displayName = profile?.username || user.email.split('@')[0];
+    
+    state.user = {
+      id: user.id,
+      name: displayName,
+      bio: state.user?.bio || '',
+      isGuest: false,
+      emailVerified: true
+    };
+    
+    saveState();
+    await enterApp();
+  } catch (err) {
+    console.error('OTP verification error:', err);
+    showAuthError('An error occurred. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Verify Code';
+  }
+}
+
+async function resendOTP(email) {
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  
+  try {
+    const { error } = await supabaseClient.auth.resend({
+      type: 'signup',
+      email: email
+    });
+    
+    if (error) {
+      showAuthError('Failed to resend code: ' + error.message);
+      btn.disabled = false;
+      btn.textContent = 'Resend Code';
+    } else {
+      showAuthError('');
+      btn.textContent = 'Code Sent! ✓';
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = 'Resend Code';
+      }, 2000);
+    }
+  } catch (err) {
+    console.error('Resend error:', err);
+    showAuthError('An error occurred. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Resend Code';
+  }
+}
+
+function backToAuth(mode) {
+  const otpContainer = document.getElementById('otp-input-container');
+  if (otpContainer) otpContainer.remove();
+  
+  const authTabs = document.querySelector('.auth-tabs');
+  authTabs.style.display = '';
+  
+  if (mode === 'signup') {
+    document.getElementById('signup-fields').style.display = '';
+    document.getElementById('login-fields').style.display = 'none';
+    switchTab('signup');
+  } else {
+    document.getElementById('signup-fields').style.display = 'none';
+    document.getElementById('login-fields').style.display = '';
+    switchTab('login');
+  }
+  
+  showAuthError('');
+}
+
 function showEmailConfirmationMessage(email) {
   showAuthError('');
   const signupFields = document.getElementById('signup-fields');
@@ -767,92 +982,6 @@ function showEmailConfirmationMessage(email) {
     </div>
   `;
   authBox.appendChild(confirmMsg);
-}
-
-function showEmailVerificationGate() {
-  // Hide all auth fields
-  const signupFields = document.getElementById('signup-fields');
-  const loginFields = document.getElementById('login-fields');
-  
-  signupFields.style.display = 'none';
-  loginFields.style.display = 'none';
-  
-  // Hide auth tabs
-  const authTabs = document.querySelector('.auth-tabs');
-  authTabs.style.display = 'none';
-  
-  const authBox = document.querySelector('.auth-box');
-  const existingMsg = document.getElementById('email-verification-gate');
-  if (existingMsg) existingMsg.remove();
-  
-  const verifyMsg = document.createElement('div');
-  verifyMsg.id = 'email-verification-gate';
-  verifyMsg.innerHTML = `
-    <div style="padding: 1.5rem; text-align: center;">
-      <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔒</div>
-      <h2 style="color: var(--accent); margin-bottom: 0.5rem; font-family: 'Cinzel', serif;">Email Verification Required</h2>
-      <p style="color: var(--text2); margin-bottom: 1.5rem;">Please verify your email address to access your account.</p>
-      <p style="color: var(--text3); font-size: 0.9rem; margin-bottom: 1rem;">A confirmation link was sent to your email. Click it to verify your account.</p>
-      <button class="btn-guest" onclick="resendConfirmationEmail()" style="margin-bottom: 0.75rem; width: 100%;">Resend Confirmation Email</button>
-      <button class="btn-guest" onclick="logOutAndReset()" style="background: var(--bg2); color: var(--text); margin-bottom: 0.5rem; width: 100%;">← Try Different Email</button>
-      <p style="font-size: 0.75rem; color: var(--text3); margin-top: 1rem;">Once you verify your email, you'll be able to log in and use your account.</p>
-    </div>
-  `;
-  authBox.appendChild(verifyMsg);
-}
-
-async function resendConfirmationEmail() {
-  if (!state.user || !state.user.id) {
-    showAuthError('Unable to find user. Please sign in again.');
-    return;
-  }
-
-  const btn = event.target;
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-
-  try {
-    const { error } = await supabaseClient.auth.resend({
-      type: 'signup',
-      email: state.user.email || (await supabaseClient.auth.getUser()).data.user?.email
-    });
-
-    if (error) {
-      showAuthError('Failed to resend email: ' + error.message);
-    } else {
-      showAuthError('');
-      btn.textContent = 'Email Sent! ✓';
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.textContent = 'Resend Confirmation Email';
-      }, 3000);
-    }
-  } catch (err) {
-    console.error('Resend error:', err);
-    showAuthError('An error occurred. Please try again.');
-    btn.disabled = false;
-    btn.textContent = 'Resend Confirmation Email';
-  }
-}
-
-async function logOutAndReset() {
-  await supabaseClient.auth.signOut();
-  state.user = null;
-  saveState();
-  
-  // Reset UI
-  const authTabs = document.querySelector('.auth-tabs');
-  authTabs.style.display = '';
-  document.getElementById('signup-fields').style.display = '';
-  document.getElementById('login-fields').style.display = 'none';
-  
-  const verifyGate = document.getElementById('email-verification-gate');
-  if (verifyGate) verifyGate.remove();
-  
-  const confirmMsg = document.getElementById('email-confirmation-msg');
-  if (confirmMsg) confirmMsg.remove();
-  
-  switchTab('signup');
 }
 </script>
 
@@ -2190,16 +2319,17 @@ async function init(){
 
     // ⚠️ Check if email is verified
     if (!user.email_confirmed_at) {
-      // Email not confirmed - show verification gate
+      // Email not confirmed - show OTP input
       state.user = {
         id: user.id,
         name: user.user_metadata?.display_name || user.email.split('@')[0],
+        email: user.email,
         bio: '',
         isGuest: false,
         emailVerified: false
       };
       saveState();
-      showEmailVerificationGate();
+      showOTPInput(user.email, 'login');
       return;
     }
 
