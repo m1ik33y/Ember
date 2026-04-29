@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="/favicon.png" />
-
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Ember</title>
@@ -636,7 +634,18 @@ async function signUp() {
 
   const user = loginData.user;
 
-  // 3. Insert profile (must succeed before continuing)
+  // 3. Update user metadata with display name
+  const { error: metadataError } = await supabaseClient.auth.updateUser({
+    data: { display_name: username }
+  });
+
+  if (metadataError) {
+    setAuthLoading('btn-signup', false, 'Create Account');
+    console.error('Metadata update error:', metadataError);
+    return showAuthError('Failed to update profile: ' + metadataError.message);
+  }
+
+  // 4. Insert profile (must succeed before continuing)
   const { error: profileError } = await supabaseClient.from('profiles').insert({ 
     id: user.id, 
     username: username 
@@ -648,7 +657,7 @@ async function signUp() {
     return showAuthError('Failed to create profile: ' + profileError.message);
   }
 
-  // 4. Set state with REAL uid from Supabase
+  // 5. Set state with REAL uid from Supabase
   state.user = {
     id: user.id,
     name: username,
@@ -1455,25 +1464,35 @@ function renderChats(){
 }
 
 async function loadPosts(){
-  const { data, error } = await supabaseClient
+  const { data: posts, error: postsError } = await supabaseClient
     .from('posts')
-    .select(`
-        *,
-        profiles!inner(username)
-      `)
+    .select('*')
     .order('created_at', { ascending: false });
 
-  if(error){
-    console.error('Load posts error:', error);
-    const { data: fallbackData, error: fallbackError } = await supabaseClient
-      .from('posts')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if(fallbackError) return showToast('Failed to load posts');
-    data = fallbackData;
+  if(postsError) {
+    console.error('Load posts error:', postsError);
+    return showToast('Failed to load posts');
   }
 
-  state.posts = data.map(p => ({
+  // Fetch all profiles to map display names to user IDs
+  const { data: profiles, error: profilesError } = await supabaseClient
+    .from('profiles')
+    .select('id, username');
+
+  if(profiles) {
+    // Populate state.users with display names from profiles
+    profiles.forEach(profile => {
+      state.users[profile.id] = {
+        id: profile.id,
+        name: profile.username,
+        isGuest: false
+      };
+    });
+  } else if(profilesError) {
+    console.error('Load profiles error:', profilesError);
+  }
+
+  state.posts = posts.map(p => ({
     id: p.id,
     uid: p.user_id,
     text: p.text,
