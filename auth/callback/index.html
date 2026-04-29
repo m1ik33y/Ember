@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verifying Email...</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Lato', sans-serif;
+      background: linear-gradient(135deg, #FFF8F0, #FFEEDD);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #2A1A0A;
+    }
+    .container {
+      text-align: center;
+      background: white;
+      padding: 3rem 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+      max-width: 400px;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #D67933;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1.5rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin: 0 0 0.5rem;
+      color: #D67933;
+    }
+    p {
+      color: #666;
+      margin: 0.5rem 0;
+      font-size: 0.95rem;
+    }
+    .error {
+      background: #FFF0F0;
+      border: 1px solid #E24B4A;
+      color: #E24B4A;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      display: none;
+    }
+    .error.show {
+      display: block;
+    }
+    .error-title {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    a {
+      color: #D67933;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="spinner"></div>
+    <h1>Verifying Email...</h1>
+    <p>Please wait while we confirm your email address.</p>
+    <div class="error" id="error-box">
+      <div class="error-title">Verification Failed</div>
+      <div id="error-message"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = "https://ksdxieuskfkljtrtaksp.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzZHhpZXVza2ZrbGp0cnRha3NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMTU4ODgsImV4cCI6MjA5Mjc5MTg4OH0.UrZYqpqNz7j3mlcxoJfpAmvTXaFaHRPA_dB-wOXycSU";
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function handleCallback() {
+      try {
+        // Get the tokens from the URL hash
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        
+        const accessToken = params.get('access_token');
+        const refreshToken = params.get('refresh_token');
+
+        if (!accessToken) {
+          showError('No access token found. The verification link may have expired.');
+          return;
+        }
+
+        // Exchange tokens for session
+        const { data: { session }, error: sessionError } = await supabaseClient.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken
+        });
+
+        if (sessionError) {
+          showError('Failed to verify session: ' + sessionError.message);
+          return;
+        }
+
+        // Get the user to verify email is confirmed
+        const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+
+        if (userError || !user) {
+          showError('Failed to load user data: ' + (userError?.message || 'Unknown error'));
+          return;
+        }
+
+        // Check if email is confirmed
+        if (!user.email_confirmed_at) {
+          showError('Email not yet confirmed. Please try again or request a new confirmation link.');
+          return;
+        }
+
+        // Success! Redirect to main app
+        window.location.href = '/';
+      } catch (err) {
+        console.error('Callback error:', err);
+        showError('An unexpected error occurred: ' + err.message);
+      }
+    }
+
+    function showError(message) {
+      const errorBox = document.getElementById('error-box');
+      const errorMsg = document.getElementById('error-message');
+      errorMsg.textContent = message;
+      errorBox.classList.add('show');
+      
+      // Add retry link after 1 second
+      setTimeout(() => {
+        errorMsg.innerHTML += '<br><br><a href="/">← Back to Sign In</a>';
+      }, 1000);
+    }
+
+    // Run callback handler
+    handleCallback();
+  </script>
+</body>
+</html>
